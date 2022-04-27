@@ -1,5 +1,8 @@
+package src;
+import java.awt.*;
+import java.awt.event.*;
 public class Board{
-  private Square[][] board = Square[8][8];
+  private Square[][] board = new Square[8][8];
   
   public Board(){
     for(int i = 0; i < 8; i++){
@@ -17,5 +20,9 @@ public class Board{
 
   private void generatePieces(){
     
+  }
+
+  public void justClicked(MouseEvent me) {
+
   }
 }

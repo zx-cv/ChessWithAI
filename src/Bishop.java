@@ -1,6 +1,8 @@
+package src;
+
 public class Bishop extends Piece{
   
-  public Bishop(isWhite, rank, file){
+  public Bishop(boolean isWhite, int rank, int file){
     this.isWhite = isWhite;
     this.rank = rank;
     this.file = file;

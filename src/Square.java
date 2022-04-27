@@ -1,4 +1,6 @@
-public Class Square{
+package src;
+
+public class Square{
   
   private boolean isWhite;
   private Piece piece;
