@@ -2,7 +2,7 @@ package src;
 import java.awt.*;
 import java.awt.event.*;
 public class Board{
-  private Square[][] board = new Square[8][8];
+  private static Square[][] board = new Square[8][8];
   
   public Board(){
     for(int i = 0; i < 8; i++){
@@ -24,5 +24,9 @@ public class Board{
 
   public void justClicked(MouseEvent me) {
 
+  }
+
+  public static boolean inBounds(int toR, int toC) {
+    return toR >= 0 && toR < board.length && toC >= 0 && toC < board[0].length;
   }
 }

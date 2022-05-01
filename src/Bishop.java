@@ -8,4 +8,7 @@ public class Bishop extends Piece{
     this.file = file;
   }
   
+  public boolean isLegal(int toR, int toC) {
+    
+  }
 }
