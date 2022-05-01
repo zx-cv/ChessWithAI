@@ -1,4 +1,5 @@
 package src;
+import java.util.*;
 
 public class King extends Piece{
   public King(boolean isWhite, int rank, int file){
@@ -7,10 +8,23 @@ public class King extends Piece{
     this.file = file;
   }
 
-  public boolean isLegal(int toR, int toC) {
-    if (!Board.inBounds(toR, toC) || toR == this.r && toC == this.c) return false;
-    int rDiff = Math.abs(toR - this.r);
-    int cDiff = Math.abs(toC - this.c);
-    return (rDiff <= 1 && cDiff <= 1);
+  //doesnt account for checks yet
+  public List<Piece> getLegalMoves(Board board){
+    List<Piece> ans = new ArrayList<>();
+    for(int i=-1;i<2;i++){
+      for(int j=-1;j<2;j++){
+        if((i==0 && j == 0) || rank+i < 0 || rank+i > 7 || file+j < 0 || file+j > 7){
+          continue;
+        }
+        Square s = board[rank+i][file+j];
+        if(s.getPiece().isWhite() == isWhite){
+          continue;
+        }
+        ans.add(s);
+      }
+    }
+    return ans;
   }
+
+  
 }
