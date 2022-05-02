@@ -15,10 +15,10 @@ import javax.swing.*;
 public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
-	Board board = new Board();
+	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
 
 	// starting dimensions of window (pixels)
-	public static final int WIDTH = 8*Game.sq, HEIGHT = 8*Game.sq, REFRESH = 40;
+	public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
 	
 	// where the game objects are displayed
 	private JPanel panel = new JPanel() {

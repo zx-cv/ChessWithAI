@@ -11,19 +11,20 @@ public class Bishop extends Piece{
 
   
   //doesn't account for checks
-  public List<Square> getLegalMoves(Board board){
-    List<Square> ans = new ArrayList<>();
-    Piece p = board[r][f].getPiece();
+  public ArrayList<Square> getLegalMoves(Board b){
+    Square[][] board = b.getGrid();
+    ArrayList<Square> ans = new ArrayList<>();
+    Piece p = board[rank][file].getPiece();
     
     //top left
-    r = rank;
-    f = file;
+    int r = rank;
+    int f = file;
     while(r >= 0 && f >= 0){
       r--;
       f--;
       //check if piece is in the way, then checks color
       if(board[r][f].hasPiece()){
-        if(board[r][f].getPiece().isWhite() != isWhite{
+        if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
           break;
         }
@@ -38,7 +39,7 @@ public class Bishop extends Piece{
       r--;
       f++;
       if(board[r][f].hasPiece()){
-        if(board[r][f].getPiece().isWhite() != isWhite{
+        if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
           break;
         }
@@ -53,7 +54,7 @@ public class Bishop extends Piece{
       r++;
       f--;
       if(board[r][f].hasPiece()){
-        if(board[r][f].getPiece().isWhite() != isWhite{
+        if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
           break;
         }
@@ -68,7 +69,7 @@ public class Bishop extends Piece{
       r++;
       f++;
       if(board[r][f].hasPiece()){
-        if(board[r][f].getPiece().isWhite() != isWhite{
+        if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
           break;
         }
@@ -77,9 +78,5 @@ public class Bishop extends Piece{
     }
 
     return ans;
-  }
-  
-  public boolean isLegal(int toR, int toC) {
-    
   }
 }

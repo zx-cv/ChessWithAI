@@ -47,7 +47,7 @@ public class Game {
 	 * @param g
 	 */
     public void drawTheGame(Graphics g) {
-
+		GameFrame.board.draw(g);
 
 	}
 
