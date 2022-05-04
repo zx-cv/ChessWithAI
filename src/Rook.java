@@ -9,6 +9,6 @@ public class Rook extends Piece{
     }
 
     public ArrayList<Square> getLegalMoves(Board board) {
-
+        return null;
     }
 }
