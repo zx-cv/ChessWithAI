@@ -2,10 +2,14 @@ package src;
 import java.util.*;
 
 public class King extends Piece{
+  static int x=0, w = 90, h=90;
+  private int y = 0;
   public King(boolean isWhite, int rank, int file){
     this.isWhite = isWhite;
+    if (!isWhite) y = 90;
     this.rank = rank;
     this.file = file;
+    this.setImage(openImageFromSpriteSheet(x, y, w, h));
   }
 
   //doesnt account for checks yet

@@ -50,6 +50,13 @@ public class GameFrame extends JFrame {
 		panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.add(panel);
 		this.pack();
+		panel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent me) {
+				clickedAt(me);
+			}
+		});
+		
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -58,6 +65,7 @@ public class GameFrame extends JFrame {
 				panel.repaint();
 			}
 		});
+		
 		timer.start();
 		this.setVisible(true);
 		panel.requestFocusInWindow();

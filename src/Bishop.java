@@ -2,11 +2,15 @@ package src;
 import java.util.*;
 
 public class Bishop extends Piece{
+  static int x=180, w = 90, h=90;
+  private int y = 0;
   
   public Bishop(boolean isWhite, int rank, int file){
     this.isWhite = isWhite;
+    if (!this.isWhite) y = 90;
     this.rank = rank;
     this.file = file;
+    this.setImage(openImageFromSpriteSheet(x, y, w, h));
   }
 
   

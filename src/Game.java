@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 public class Game {
 	
 	public static boolean gameOver = false;
-	public static int sq = 20;
     public Game(){
         
     }
@@ -48,6 +47,12 @@ public class Game {
 	 */
     public void drawTheGame(Graphics g) {
 		GameFrame.board.draw(g);
+		for (Piece p: GameFrame.board.getWhitePieces()) {
+			p.draw(g);
+		}
+		for (Piece p: GameFrame.board.getBlackPieces()) {
+			p.draw(g);
+		}
 
 	}
 

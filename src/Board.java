@@ -4,17 +4,19 @@ import java.awt.event.*;
 import java.util.*;
 public class Board{
   private Square[][] grid = new Square[8][8];
-  private ArrayList<Piece> whitePieces = new ArrayList<>();
-  private ArrayList<Piece> blackPieces = new ArrayList<>();
+  private static ArrayList<Piece> whitePieces = new ArrayList<>();
+  private static ArrayList<Piece> blackPieces = new ArrayList<>();
+  private int lastClickedR = -1, lastClickedC = -1;
+  private boolean secondClick = false;
   
   public Board(boolean isWhite){
     for(int i = 0; i < 8; i++){
       for(int j = 0; j <8; j++){
         if((i%2 + j%2)%2 == 0){
-          grid[i][j] = new Square(true, i * Square.getSide(), j * Square.getSide());
+          grid[i][j] = new Square(true, i, j);
         }
         else{
-          grid[i][j] = new Square(false, i * Square.getSide(), j * Square.getSide());
+          grid[i][j] = new Square(false, i, j);
         }
       }
     }
@@ -23,6 +25,14 @@ public class Board{
 
   public Square[][] getGrid() {
     return grid;
+  }
+
+  public static ArrayList<Piece> getWhitePieces() {
+    return whitePieces;
+  }
+
+  public static ArrayList<Piece> getBlackPieces() {
+    return blackPieces;
   }
 
   //initializes and place pieces on the board
@@ -86,6 +96,30 @@ public class Board{
   }
 
   public void justClicked(MouseEvent me) {
+    int r = me.getY() / Square.getSide();
+    int c = me.getX() / Square.getSide();
+    if (!secondClick) {
+      secondClick = true;
+      lastClickedR = r;
+      lastClickedC = c;
+      grid[r][c].getPiece().select(true);
+      return;
+    }
+
+    grid[lastClickedR][lastClickedC].getPiece().select(false);
+    //ArrayList<Square> validMoves = grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this);
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) { //  || !validMoves.contains(grid[r][c])
+      System.out.println("Invalid move!");
+      return;
+    }
+    if (grid[r][c].hasPiece()) {
+      grid[r][c].eatenPiece();
+    }
+    grid[r][c].placePiece(grid[lastClickedR][lastClickedC].getPiece());
+    grid[lastClickedR][lastClickedC].removePiece();
+    lastClickedC = -1;
+    lastClickedR = -1;
+    secondClick = false;
     
   }
 
