@@ -36,6 +36,9 @@ public class Pawn extends Piece{
             ans.add(board[rank+dir][file]);
         }
         for (int f = file - 1; f < file + 2; f += 2) {
+            if (f < 0 || f > 7) {
+                continue;
+            }
             if (board[rank+dir][f].hasPiece()) {
                 ans.add(board[rank+dir][f]);
             }
