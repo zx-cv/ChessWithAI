@@ -8,8 +8,10 @@ public class Board{
   private static ArrayList<Piece> blackPieces = new ArrayList<>();
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
+  private boolean isWhite;
   
   public Board(boolean isWhite){
+    this.isWhite = isWhite;
     for(int i = 0; i < 8; i++){
       for(int j = 0; j <8; j++){
         if((i%2 + j%2)%2 == 0){
@@ -93,6 +95,10 @@ public class Board{
         blackPieces.add(grid[7][i].getPiece());
       }
     }
+  }
+
+  public boolean isWhite() {
+    return isWhite;
   }
 
   public void justClicked(MouseEvent me) {
