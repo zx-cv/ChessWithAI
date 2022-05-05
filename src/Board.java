@@ -104,7 +104,7 @@ public class Board{
   public void justClicked(MouseEvent me) {
     int r = me.getY() / Square.getSide();
     int c = me.getX() / Square.getSide();
-    if (!secondClick) {
+    if (!secondClick && grid[r][c].hasPiece()) {
       secondClick = true;
       lastClickedR = r;
       lastClickedC = c;
@@ -114,7 +114,7 @@ public class Board{
 
     grid[lastClickedR][lastClickedC].getPiece().select(false);
     //ArrayList<Square> validMoves = grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this);
-    if (!grid[lastClickedR][lastClickedC].hasPiece()) { //  || !validMoves.contains(grid[r][c])
+    if (!grid[lastClickedR][lastClickedC].hasPiece() || lastClickedR == r && lastClickedC == c) { //  || !validMoves.contains(grid[r][c])
       System.out.println("Invalid move!");
       return;
     }
