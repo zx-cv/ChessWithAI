@@ -133,12 +133,6 @@ public class Board{
     if (grid[r][c].hasPiece()) {
       grid[r][c].capture();
     }
-    //en peassant check
-    int dir = (grid[lastClickedR][lastClickedC].getPiece().isWhite() ^ this.isWhite()) ? -1 : 1;
-    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && grid[r+dir][c].getPiece().isPawn()) {
-      grid[r+dir][c].capture();
-    }
-
     grid[r][c].placePiece(grid[lastClickedR][lastClickedC].getPiece());
     grid[lastClickedR][lastClickedC].removePiece();
     lastClickedC = -1;
