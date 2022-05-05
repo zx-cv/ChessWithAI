@@ -136,7 +136,6 @@ public class Queen extends Piece{
             }
             ans.add(board[r][f]);
         }
-
         return ans;
     }
 }
