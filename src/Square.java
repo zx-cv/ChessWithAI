@@ -27,8 +27,8 @@ public class Square{
     piece = p;
   }
 
-  public void eatenPiece() {
-    if (isWhite) {
+  public void capture() {
+    if (piece.isWhite()) {
       for (int i = 0; i < Board.getWhitePieces().size(); i++) {
         if (Board.getWhitePieces().get(i) == piece) {
           Board.getWhitePieces().remove(i);

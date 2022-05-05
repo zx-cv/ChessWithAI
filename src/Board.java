@@ -119,7 +119,7 @@ public class Board{
       return;
     }
     if (grid[r][c].hasPiece()) {
-      grid[r][c].eatenPiece();
+      grid[r][c].capture();
     }
     grid[r][c].placePiece(grid[lastClickedR][lastClickedC].getPiece());
     grid[lastClickedR][lastClickedC].removePiece();

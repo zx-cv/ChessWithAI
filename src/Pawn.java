@@ -21,7 +21,7 @@ public class Pawn extends Piece{
         ArrayList<Square> ans = new ArrayList<>();
         for (int i = -1; i < 2; i++) {
             try {
-                if (board[rank-1][file])
+                if (board[rank-1][file]) 
             }
         }
     }

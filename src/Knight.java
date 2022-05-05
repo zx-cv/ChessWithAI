@@ -2,16 +2,11 @@ package src;
 
 import java.util.*;
 
-<<<<<<< HEAD
 public class Knight extends Piece{
   static int x=270, w = 90, h=90;
   private int y = 0;
 
   public Knight(boolean isWhite, int rank, int file){
-=======
-public class Knight extends Piece {
-  public Knight(boolean isWhite, int rank, int file) {
->>>>>>> fa3fa8136bb11d2bd215e9afa557df3d530e1810
     this.isWhite = isWhite;
     if (!this.isWhite) y = 90;
     this.rank = rank;
