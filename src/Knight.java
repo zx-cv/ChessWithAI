@@ -18,20 +18,71 @@ public class Knight extends Piece{
   public ArrayList<Square> getLegalMoves(Board b) {
     Square[][] board = b.getGrid();
     ArrayList<Square> ans = new ArrayList<>();
-    for (int i = -1; i < 2; i += 2) {
-      for (int j = -1; j < 2; j += 2) {
-        try {
-          ans.add(board[rank + (j) * 3][file + i]);
-        } catch (Exception e) {
-
-        }
-        try {
-          ans.add(board[rank + (j)][file + i * 3]);
-        } catch (Exception e) {
-          
-        }
+    
+    //up left
+    if (rank > 1  && file > 0) {
+      int r = rank -2;
+      int f = file - 1;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
       }
     }
+    if (rank > 0 && file > 1) {
+      int r = rank - 1;
+      int f = file - 2;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+
+    //up right
+    if (rank > 1  && file < 7) {
+      int r = rank -2;
+      int f = file + 1;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+    if (rank > 0 && file < 6) {
+      int r = rank - 1;
+      int f = file + 2;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+
+    //down left
+    if (rank < 6  && file > 0) {
+      int r = rank + 2;
+      int f = file - 1;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+    if (rank < 7 && file > 1) {
+      int r = rank + 1;
+      int f = file - 2;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+
+    //down right
+    if (rank < 6  && file < 7) {
+      int r = rank + 2;
+      int f = file + 1;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+    if (rank < 7 && file < 6) {
+      int r = rank + 1;
+      int f = file + 2;
+      if (!board[r][f].hasPiece() || board[r][f].getPiece().isWhite() != this.isWhite) {
+        ans.add(board[r][f]);
+      }
+    }
+
     return ans;
   }
 }

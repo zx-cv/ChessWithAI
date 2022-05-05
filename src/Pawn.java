@@ -19,11 +19,18 @@ public class Pawn extends Piece{
         int dir = (isWhite ^ b.isWhite()) ? -1 : 1;
         Square[][] board = b.getGrid();
         ArrayList<Square> ans = new ArrayList<>();
-        for (int i = -1; i < 2; i++) {
-            try {
-                if (board[rank-1][file]) 
+        boolean firstMove = (!isWhite && rank == 6);
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                ans.add(board[r][c]);
             }
         }
+        //for (int i = -1; i < 2; i++) {
+        //   try {
+        //       if (board[rank-1][file]) 
+        //   }
+        // }
+        return ans;
     }
 
     

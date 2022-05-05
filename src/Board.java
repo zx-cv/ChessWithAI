@@ -9,6 +9,7 @@ public class Board{
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
   private boolean isWhite;
+  private boolean moveWhite = true;
   
   public Board(boolean isWhite){
     this.isWhite = isWhite;
@@ -105,19 +106,30 @@ public class Board{
     int r = me.getY() / Square.getSide();
     int c = me.getX() / Square.getSide();
     if (!secondClick) {
+      if (grid[r][c].getPiece() == null) {
+        return;
+      }
+      if (grid[r][c].getPiece().isWhite != moveWhite) {
+        return;
+      }
       secondClick = true;
       lastClickedR = r;
       lastClickedC = c;
       grid[r][c].getPiece().select(true);
       return;
     }
-
+    
     grid[lastClickedR][lastClickedC].getPiece().select(false);
-    //ArrayList<Square> validMoves = grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this);
+    if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c]) || (grid[r][c] == grid[lastClickedR][lastClickedC])){
+      secondClick = false;
+      return;
+    }
+
     if (!grid[lastClickedR][lastClickedC].hasPiece()) { //  || !validMoves.contains(grid[r][c])
       System.out.println("Invalid move!");
       return;
     }
+    moveWhite = !moveWhite;
     if (grid[r][c].hasPiece()) {
       grid[r][c].capture();
     }

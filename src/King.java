@@ -4,6 +4,9 @@ import java.util.*;
 public class King extends Piece{
   static int x=0, w = 90, h=90;
   private int y = 0;
+  private static boolean whiteKingCheck;
+  private static boolean blackKingCheck;
+
   public King(boolean isWhite, int rank, int file){
     this.isWhite = isWhite;
     if (!isWhite) y = 90;
@@ -22,7 +25,7 @@ public class King extends Piece{
           continue;
         }
         Square s = board[rank+i][file+j];
-        if(s.getPiece().isWhite() == isWhite){
+        if(s.hasPiece() && s.getPiece().isWhite() == isWhite){
           continue;
         }
         ans.add(s);
