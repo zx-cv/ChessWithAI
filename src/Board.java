@@ -10,6 +10,8 @@ public class Board{
   private boolean secondClick = false;
   private boolean isWhite;
   private boolean moveWhite = true;
+  private King bKing, wKing;
+
   
   public Board(boolean isWhite){
     this.isWhite = isWhite;
@@ -68,14 +70,24 @@ public class Board{
     //King and Queen
     if(isWhite){
       grid[0][3].placePiece(new Queen(!isWhite,0,3));
-      grid[0][4].placePiece(new King(!isWhite,0,4));
+
+      bKing = new King(!isWhite,0,4);
+      grid[0][4].placePiece(bKing);
+
       grid[7][3].placePiece(new Queen(isWhite,7,3));
-      grid[7][4].placePiece(new King(isWhite,7,4));
+
+      wKing = new King(isWhite,7,4);
+      grid[7][4].placePiece(wKing);
     }
     else{
-      grid[0][3].placePiece(new King(!isWhite,0,3));
+      bKing = new King(!isWhite,0,3);
+      grid[0][3].placePiece(bKing);
+
       grid[0][4].placePiece(new Queen(!isWhite,0,4));
-      grid[7][3].placePiece(new King(isWhite,7,3));
+
+      wKing = new King(isWhite,7,3);
+      grid[7][3].placePiece(wKing);
+
       grid[7][4].placePiece(new Queen(isWhite,7,4));
     }
 
@@ -138,6 +150,10 @@ public class Board{
     lastClickedC = -1;
     lastClickedR = -1;
     secondClick = false;
+
+    if (blackInCheck() || whiteInCheck()) {
+      System.out.println("CHECK");
+    }
     
   }
 
@@ -151,5 +167,41 @@ public class Board{
         grid[i][j].draw(g);
       }
     }
+  }
+
+  public boolean blackInCheck(){
+    Square kSq = grid[bKing.getRank()][bKing.getFile()];
+    for (Piece p: whitePieces) {
+      ArrayList<Square> moves;
+      if (p instanceof Pawn) {
+        moves = ((Pawn)p).getAttackMoves(this);
+      }
+      else {
+        moves = p.getLegalMoves(this);
+      }
+      
+      if (moves.contains(kSq)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean whiteInCheck(){
+    Square kSq = grid[wKing.getRank()][wKing.getFile()];
+    for (Piece p: blackPieces) {
+      ArrayList<Square> moves;
+      if (p instanceof Pawn) {
+        moves = ((Pawn)p).getAttackMoves(this);
+      }
+      else {
+        moves = p.getLegalMoves(this);
+      }
+      
+      if (moves.contains(kSq)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

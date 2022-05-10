@@ -48,6 +48,19 @@ public class Pawn extends Piece{
         }
         return ans;
     }
+
+    public ArrayList<Square> getAttackMoves(Board b) {
+        ArrayList<Square> ans = getLegalMoves(b);
+
+
+        for (int i = 0; i < ans.size(); i++) {
+            if (ans.get(i).getFile() == file) {
+                ans.remove(i);
+            }
+        }
+
+        return ans;
+    }
     @Override
     public void moveTo(int r, int f) {
         super.moveTo(r, f);
