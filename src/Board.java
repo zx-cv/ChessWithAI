@@ -9,6 +9,8 @@ public class Board{
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
   private boolean isWhite;
+  private boolean moveWhite = true;
+  private ArrayList<Square[][]> boardStates = new ArrayList<>();
   
   public Board(boolean isWhite){
     this.isWhite = isWhite;
@@ -23,6 +25,10 @@ public class Board{
       }
     }
     generatePieces(isWhite);
+  }
+
+  public ArrayList<Square[][]> getBoardStates() {
+    return boardStates;
   }
 
   public Square[][] getGrid() {
@@ -104,20 +110,31 @@ public class Board{
   public void justClicked(MouseEvent me) {
     int r = me.getY() / Square.getSide();
     int c = me.getX() / Square.getSide();
-    if (!secondClick && grid[r][c].hasPiece()) {
+    if (!secondClick) {
+      if (grid[r][c].getPiece() == null) {
+        return;
+      }
+      if (grid[r][c].getPiece().isWhite != moveWhite) {
+        return;
+      }
       secondClick = true;
       lastClickedR = r;
       lastClickedC = c;
       grid[r][c].getPiece().select(true);
       return;
     }
-
+    
     grid[lastClickedR][lastClickedC].getPiece().select(false);
-    //ArrayList<Square> validMoves = grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this);
-    if (!grid[lastClickedR][lastClickedC].hasPiece() || lastClickedR == r && lastClickedC == c) { //  || !validMoves.contains(grid[r][c])
+    if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c]) || (grid[r][c] == grid[lastClickedR][lastClickedC])){
+      secondClick = false;
+      return;
+    }
+
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) { //  || !validMoves.contains(grid[r][c])
       System.out.println("Invalid move!");
       return;
     }
+    moveWhite = !moveWhite;
     if (grid[r][c].hasPiece()) {
       grid[r][c].capture();
     }
@@ -126,7 +143,7 @@ public class Board{
     lastClickedC = -1;
     lastClickedR = -1;
     secondClick = false;
-    
+    boardStates.add(grid.clone());
   }
 
   public boolean inBounds(int toR, int toC) {

@@ -21,15 +21,15 @@ public class Queen extends Piece{
         // top left
         int r = rank;
         int f = file;
-        while (r >= 0 && f >= 0) {
+        while (r > 0 && f > 0) {
             r--;
             f--;
             // check if piece is in the way, then checks color
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -37,14 +37,14 @@ public class Queen extends Piece{
         // top right
         r = rank;
         f = file;
-        while (r >= 0 && f < 8) {
+        while (r > 0 && f < 7) {
             r--;
             f++;
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -52,14 +52,14 @@ public class Queen extends Piece{
         // bottom left
         r = rank;
         f = file;
-        while (r < 8 && f >= 0) {
+        while (r < 7 && f > 0) {
             r++;
             f--;
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -67,14 +67,14 @@ public class Queen extends Piece{
         // bottom right
         r = rank;
         f = file;
-        while (r < 8 && f < 8) {
+        while (r < 7 && f < 7) {
             r++;
             f++;
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -82,14 +82,14 @@ public class Queen extends Piece{
         // up
         r = rank;
         f = file;
-        while (r >= 0) {
+        while (r > 0) {
             r--;
             // check if piece is in the way, then checks color
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -97,13 +97,13 @@ public class Queen extends Piece{
         // right
         r = rank;
         f = file;
-        while (f < 8) {
+        while (f < 7) {
             f++;
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -111,13 +111,13 @@ public class Queen extends Piece{
         // down
         r = rank;
         f = file;
-        while (r < 8) {
+        while (r < 7) {
             r++;
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
@@ -125,18 +125,17 @@ public class Queen extends Piece{
         // left
         r = rank;
         f = file;
-        while (f >= 0) {
+        while (f > 0) {
             f--;
             // check if piece is in the way, then checks color
             if (board[r][f].hasPiece()) {
                 if (board[r][f].getPiece().isWhite() != this.isWhite) {
                     ans.add(board[r][f]);
-                    break;
                 }
+                break;
             }
             ans.add(board[r][f]);
         }
-
         return ans;
     }
 }

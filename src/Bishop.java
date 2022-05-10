@@ -23,45 +23,45 @@ public class Bishop extends Piece{
     //top left
     int r = rank;
     int f = file;
-    while(r >= 0 && f >= 0){
+    while(r > 0 && f > 0){
       r--;
       f--;
       //check if piece is in the way, then checks color
       if(board[r][f].hasPiece()){
         if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
-          break;
         }
-      }
+        break;
+      } 
       ans.add(board[r][f]);
     }
     
     //top right
     r = rank;
     f = file;
-    while(r >= 0 && f < 8){
+    while(r > 0 && f < 7){
       r--;
       f++;
       if(board[r][f].hasPiece()){
         if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
-          break;
         }
-      }
+        break;
+      } 
       ans.add(board[r][f]);
     }
 
     //bottom left
     r = rank;
     f = file;
-    while(r < 8 && f >= 0){
+    while(r < 7 && f > 0){
       r++;
       f--;
       if(board[r][f].hasPiece()){
         if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
-          break;
         }
+        break;
       }
       ans.add(board[r][f]);
     }
@@ -69,18 +69,17 @@ public class Bishop extends Piece{
     //bottom right
     r = rank;
     f = file;
-    while(r < 8 && f < 8){
+    while(r < 7 && f < 7){
       r++;
       f++;
       if(board[r][f].hasPiece()){
         if(board[r][f].getPiece().isWhite() != this.isWhite) {
           ans.add(board[r][f]);
-          break;
         }
+        break;
       }
       ans.add(board[r][f]);
     }
-
     return ans;
   }
 }

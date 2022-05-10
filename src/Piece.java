@@ -14,7 +14,9 @@ public abstract class Piece{
 
   //returns a list of legal squares it can move to
   public abstract ArrayList<Square> getLegalMoves(Board board);
-
+  public boolean isPawn() {
+    return false;
+  }
   public void setImage(Image i) {
     if (image == null) image = i;
   }
