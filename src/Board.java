@@ -11,7 +11,7 @@ public class Board{
   private boolean isWhite;
   private boolean moveWhite = true;
   private King bKing, wKing;
-
+  private ArrayList<Square[][]> boardStates = new ArrayList<>();
   
   public Board(boolean isWhite){
     this.isWhite = isWhite;
@@ -26,6 +26,10 @@ public class Board{
       }
     }
     generatePieces(isWhite);
+  }
+
+  public ArrayList<Square[][]> getBoardStates() {
+    return boardStates;
   }
 
   public Square[][] getGrid() {
@@ -155,6 +159,7 @@ public class Board{
       System.out.println("CHECK");
     }
     
+    boardStates.add(grid.clone());
   }
 
   public boolean inBounds(int toR, int toC) {

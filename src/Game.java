@@ -21,13 +21,18 @@ public class Game {
 		if (gameOver) return;
 		// System.out.println("Moving Objects!!");
 		moveObjects();
-		checkCollisions();
+		checkGameOver();
 
 	}
     /**
 	 * Right now I am checking for collisions between GameObjects
 	 */
-	public void checkCollisions() {
+	public void checkGameOver() {
+		//check if checkmate
+		
+		//check for draw
+		
+		//check for stalemate
 		
 	}
 
