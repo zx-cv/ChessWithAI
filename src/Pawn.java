@@ -10,7 +10,7 @@ public class Pawn extends Piece{
     private boolean secondMove = true;
     private boolean isPawn = true;
 
-    public Pawn(boolean isWhite, int rank, int file){
+    public Pawn(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
         if (!this.isWhite) y = 90;
         this.rank = rank;
