@@ -146,7 +146,6 @@ public class Board {
       return;
     }
 
-
     Piece p = null;
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
@@ -179,8 +178,17 @@ public class Board {
     moveWhite = !moveWhite;
 
     if (blackInCheck() || whiteInCheck()) {
-      System.out.println("CHECK");
+      if (whiteCheckMated()) {
+        System.out.println("White Checkmated");
+      }
+      else if (blackCheckMated()) {
+        System.out.println("Black Checkmated");
+      }
+      else {
+        System.out.println("CHECK");
+      }
     }
+
 
     boardStates.add(grid.clone());
   }
@@ -231,4 +239,60 @@ public class Board {
     return false;
   }
 
+  public boolean whiteCheckMated() {
+    for (Piece p: whitePieces) {
+      ArrayList<Square> moves = p.getLegalMoves(this);
+      for(Square s: moves) {
+        if (testMove(p, s)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean blackCheckMated() {
+    for (Piece p: blackPieces) {
+      ArrayList<Square> moves = p.getLegalMoves(this);
+      for(Square s: moves) {
+        if (testMove(p, s)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean testMove(Piece piece, Square s) {
+    int fromR = piece.getRank();
+    int fromC = piece.getFile();
+    int toR = s.getRank();
+    int toC = s.getFile();
+    Piece p = null;
+    boolean ans = true;
+    if (grid[toR][toC].hasPiece()) {
+      p = grid[toR][toC].getPiece();
+      grid[toR][toC].capture();
+    }
+
+    Piece movingPiece = grid[fromR][fromC].getPiece();
+    grid[toR][toC].placePiece(movingPiece);
+    grid[fromR][fromC].removePiece();
+
+    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
+      ans = false;
+    }
+
+    grid[fromR][fromC].placePiece(movingPiece);
+    grid[toR][toC].removePiece();
+    if (p != null) {
+      grid[toR][toC].placePiece(p);
+      if (p.isWhite()) {
+        whitePieces.add(p);
+      } else {
+        blackPieces.add(p);
+      }
+    }
+    return ans;
+  }
 }
