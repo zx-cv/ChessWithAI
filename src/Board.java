@@ -1,8 +1,10 @@
 package src;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-public class Board{
+
+public class Board {
   private Square[][] grid = new Square[8][8];
   private static ArrayList<Piece> whitePieces = new ArrayList<>();
   private static ArrayList<Piece> blackPieces = new ArrayList<>();
@@ -10,16 +12,16 @@ public class Board{
   private boolean secondClick = false;
   private boolean isWhite;
   private boolean moveWhite = true;
+  private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
-  
-  public Board(boolean isWhite){
+
+  public Board(boolean isWhite) {
     this.isWhite = isWhite;
-    for(int i = 0; i < 8; i++){
-      for(int j = 0; j <8; j++){
-        if((i%2 + j%2)%2 == 0){
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        if ((i % 2 + j % 2) % 2 == 0) {
           grid[i][j] = new Square(true, i, j);
-        }
-        else{
+        } else {
           grid[i][j] = new Square(false, i, j);
         }
       }
@@ -43,58 +45,66 @@ public class Board{
     return blackPieces;
   }
 
-  //initializes and place pieces on the board
-  //isWhite == true will make white on bottom and vice versa
-  private void generatePieces(boolean isWhite){
-    //Pawns
-    for(int i=0;i<8;i++){
-      grid[1][i].placePiece(new Pawn(!isWhite,1,i));
-      grid[6][i].placePiece(new Pawn(isWhite,6,i));
+  // initializes and place pieces on the board
+  // isWhite == true will make white on bottom and vice versa
+  private void generatePieces(boolean isWhite) {
+    // Pawns
+    for (int i = 0; i < 8; i++) {
+      grid[1][i].placePiece(new Pawn(!isWhite, 1, i));
+      grid[6][i].placePiece(new Pawn(isWhite, 6, i));
     }
 
-    //Rooks
-    grid[0][0].placePiece(new Rook(!isWhite,0,0));
-    grid[0][7].placePiece(new Rook(!isWhite,0,7));
-    grid[7][0].placePiece(new Rook(isWhite,7,0));
-    grid[7][7].placePiece(new Rook(isWhite,7,7));
+    // Rooks
+    grid[0][0].placePiece(new Rook(!isWhite, 0, 0));
+    grid[0][7].placePiece(new Rook(!isWhite, 0, 7));
+    grid[7][0].placePiece(new Rook(isWhite, 7, 0));
+    grid[7][7].placePiece(new Rook(isWhite, 7, 7));
 
-    //Knights
-    grid[0][1].placePiece(new Knight(!isWhite,0,1));
-    grid[0][6].placePiece(new Knight(!isWhite,0,6));
-    grid[7][1].placePiece(new Knight(isWhite,7,1));
-    grid[7][6].placePiece(new Knight(isWhite,7,6));
+    // Knights
+    grid[0][1].placePiece(new Knight(!isWhite, 0, 1));
+    grid[0][6].placePiece(new Knight(!isWhite, 0, 6));
+    grid[7][1].placePiece(new Knight(isWhite, 7, 1));
+    grid[7][6].placePiece(new Knight(isWhite, 7, 6));
 
-    //Bishops
-    grid[0][2].placePiece(new Bishop(!isWhite,0,2));
-    grid[0][5].placePiece(new Bishop(!isWhite,0,5));
-    grid[7][2].placePiece(new Bishop(isWhite,7,2));
-    grid[7][5].placePiece(new Bishop(isWhite,7,5));
+    // Bishops
+    grid[0][2].placePiece(new Bishop(!isWhite, 0, 2));
+    grid[0][5].placePiece(new Bishop(!isWhite, 0, 5));
+    grid[7][2].placePiece(new Bishop(isWhite, 7, 2));
+    grid[7][5].placePiece(new Bishop(isWhite, 7, 5));
 
-    //King and Queen
-    if(isWhite){
-      grid[0][3].placePiece(new Queen(!isWhite,0,3));
-      grid[0][4].placePiece(new King(!isWhite,0,4));
-      grid[7][3].placePiece(new Queen(isWhite,7,3));
-      grid[7][4].placePiece(new King(isWhite,7,4));
+    // King and Queen
+    if (isWhite) {
+      grid[0][3].placePiece(new Queen(!isWhite, 0, 3));
+
+      bKing = new King(!isWhite, 0, 4);
+      grid[0][4].placePiece(bKing);
+
+      grid[7][3].placePiece(new Queen(isWhite, 7, 3));
+
+      wKing = new King(isWhite, 7, 4);
+      grid[7][4].placePiece(wKing);
+    } else {
+      bKing = new King(!isWhite, 0, 3);
+      grid[0][3].placePiece(bKing);
+
+      grid[0][4].placePiece(new Queen(!isWhite, 0, 4));
+
+      wKing = new King(isWhite, 7, 3);
+      grid[7][3].placePiece(wKing);
+
+      grid[7][4].placePiece(new Queen(isWhite, 7, 4));
     }
-    else{
-      grid[0][3].placePiece(new King(!isWhite,0,3));
-      grid[0][4].placePiece(new Queen(!isWhite,0,4));
-      grid[7][3].placePiece(new King(isWhite,7,3));
-      grid[7][4].placePiece(new Queen(isWhite,7,4));
-    }
 
-    //adding each piece to blackPieces/whitePieces
-    if(isWhite){
-      for(int i=0;i<8;i++){
+    // adding each piece to blackPieces/whitePieces
+    if (isWhite) {
+      for (int i = 0; i < 8; i++) {
         blackPieces.add(grid[0][i].getPiece());
         blackPieces.add(grid[1][i].getPiece());
         whitePieces.add(grid[6][i].getPiece());
         whitePieces.add(grid[7][i].getPiece());
       }
-    }
-    else{
-      for(int i=0;i<8;i++){
+    } else {
+      for (int i = 0; i < 8; i++) {
         whitePieces.add(grid[0][i].getPiece());
         whitePieces.add(grid[1][i].getPiece());
         blackPieces.add(grid[6][i].getPiece());
@@ -123,27 +133,68 @@ public class Board{
       grid[r][c].getPiece().select(true);
       return;
     }
-    
+
     grid[lastClickedR][lastClickedC].getPiece().select(false);
-    if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c]) || (grid[r][c] == grid[lastClickedR][lastClickedC])){
+    if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c])
+        || (grid[r][c] == grid[lastClickedR][lastClickedC])) {
       secondClick = false;
       return;
     }
 
-    if (!grid[lastClickedR][lastClickedC].hasPiece()) { //  || !validMoves.contains(grid[r][c])
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) { // || !validMoves.contains(grid[r][c])
       System.out.println("Invalid move!");
       return;
     }
+<<<<<<< HEAD
     moveWhite = !moveWhite;
     GameFrame.startTime = System.currentTimeMillis();
+=======
+
+    Piece p = null;
+>>>>>>> 0929b5766ae6ce1e46455b80b8e52df2f605931a
     if (grid[r][c].hasPiece()) {
+      p = grid[r][c].getPiece();
       grid[r][c].capture();
     }
-    grid[r][c].placePiece(grid[lastClickedR][lastClickedC].getPiece());
+
+    Piece movingPiece = grid[lastClickedR][lastClickedC].getPiece();
+    grid[r][c].placePiece(movingPiece);
     grid[lastClickedR][lastClickedC].removePiece();
+
+    // if the side that just moved is still in check, undo the move
+    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
+      grid[lastClickedR][lastClickedC].placePiece(movingPiece);
+      grid[r][c].removePiece();
+      if (p != null) {
+        grid[r][c].placePiece(p);
+        if (p.isWhite()) {
+          whitePieces.add(p);
+        } else {
+          blackPieces.add(p);
+        }
+      }
+      secondClick = false;
+      return;
+    }
+
     lastClickedC = -1;
     lastClickedR = -1;
     secondClick = false;
+    moveWhite = !moveWhite;
+
+    if (blackInCheck() || whiteInCheck()) {
+      if (whiteCheckMated()) {
+        System.out.println("White Checkmated");
+      }
+      else if (blackCheckMated()) {
+        System.out.println("Black Checkmated");
+      }
+      else {
+        System.out.println("CHECK");
+      }
+    }
+
+
     boardStates.add(grid.clone());
   }
 
@@ -175,5 +226,96 @@ public class Board{
       GameFrame.wtime.setVisible(false);
       GameFrame.btime.setVisible(true);
     }
+  }
+
+  public boolean blackInCheck() {
+    Square kSq = grid[bKing.getRank()][bKing.getFile()];
+    for (Piece p : whitePieces) {
+      ArrayList<Square> moves;
+      if (p instanceof Pawn) {
+        moves = ((Pawn) p).getAttackMoves(this);
+      } else {
+        moves = p.getLegalMoves(this);
+      }
+
+      if (moves.contains(kSq)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean whiteInCheck() {
+    Square kSq = grid[wKing.getRank()][wKing.getFile()];
+    for (Piece p : blackPieces) {
+      ArrayList<Square> moves;
+      if (p instanceof Pawn) {
+        moves = ((Pawn) p).getAttackMoves(this);
+      } else {
+        moves = p.getLegalMoves(this);
+      }
+
+      if (moves.contains(kSq)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean whiteCheckMated() {
+    for (Piece p: whitePieces) {
+      ArrayList<Square> moves = p.getLegalMoves(this);
+      for(Square s: moves) {
+        if (testMove(p, s)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean blackCheckMated() {
+    for (Piece p: blackPieces) {
+      ArrayList<Square> moves = p.getLegalMoves(this);
+      for(Square s: moves) {
+        if (testMove(p, s)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean testMove(Piece piece, Square s) {
+    int fromR = piece.getRank();
+    int fromC = piece.getFile();
+    int toR = s.getRank();
+    int toC = s.getFile();
+    Piece p = null;
+    boolean ans = true;
+    if (grid[toR][toC].hasPiece()) {
+      p = grid[toR][toC].getPiece();
+      grid[toR][toC].capture();
+    }
+
+    Piece movingPiece = grid[fromR][fromC].getPiece();
+    grid[toR][toC].placePiece(movingPiece);
+    grid[fromR][fromC].removePiece();
+
+    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
+      ans = false;
+    }
+
+    grid[fromR][fromC].placePiece(movingPiece);
+    grid[toR][toC].removePiece();
+    if (p != null) {
+      grid[toR][toC].placePiece(p);
+      if (p.isWhite()) {
+        whitePieces.add(p);
+      } else {
+        blackPieces.add(p);
+      }
+    }
+    return ans;
   }
 }

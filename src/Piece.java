@@ -38,6 +38,14 @@ public abstract class Piece{
     return selected;
   }
 
+  public int getRank() {
+    return rank;
+  }
+
+  public int getFile() {
+    return file;
+  }
+
   protected static Image openImageFromSpriteSheet(int x, int y, int w, int h) {
 		openSpriteSheet();
 		return ((BufferedImage)spriteSheet).getSubimage(x,y,w,h).getScaledInstance(Square.getSide(), Square.getSide(), BufferedImage.SCALE_SMOOTH);

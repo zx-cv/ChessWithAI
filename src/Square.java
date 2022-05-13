@@ -22,6 +22,14 @@ public class Square{
     return piece;
   }
 
+  public int getRank() {
+    return rank;
+  }
+
+  public int getFile() {
+    return file;
+  }
+
   public void placePiece(Piece p){
     p.moveTo(rank, file);
     piece = p;

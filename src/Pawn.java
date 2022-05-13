@@ -10,7 +10,7 @@ public class Pawn extends Piece{
     private boolean secondMove = true;
     private boolean isPawn = true;
 
-    public Pawn(boolean isWhite, int rank, int file){
+    public Pawn(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
         if (!this.isWhite) y = 90;
         this.rank = rank;
@@ -39,13 +39,26 @@ public class Pawn extends Piece{
             if (f < 0 || f > 7) {
                 continue;
             }
-            if (board[rank+dir][f].hasPiece()) {
+            if (board[rank+dir][f].hasPiece() && board[rank+dir][f].getPiece().isWhite() != isWhite) {
                 ans.add(board[rank+dir][f]);
             }
             if (board[rank][f].hasPiece() && board[rank][f].getPiece().isPawn() && ((Pawn) board[rank][f].getPiece()).secondMove && (board[rank][f].getPiece().isWhite() != this.isWhite)) {
                 ans.add(board[rank+dir][f]);
             }
         }
+        return ans;
+    }
+
+    public ArrayList<Square> getAttackMoves(Board b) {
+        ArrayList<Square> ans = getLegalMoves(b);
+
+
+        for (int i = 0; i < ans.size(); i++) {
+            if (ans.get(i).getFile() == file) {
+                ans.remove(i);
+            }
+        }
+
         return ans;
     }
     @Override
