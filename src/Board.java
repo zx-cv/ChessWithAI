@@ -108,8 +108,8 @@ public class Board{
   }
 
   public void justClicked(MouseEvent me) {
-    int r = me.getY() / Square.getSide();
-    int c = me.getX() / Square.getSide();
+    int r = (me.getY() - Square.getSide()/2) / Square.getSide();
+    int c = (me.getX() - 2*Square.getSide()) / Square.getSide();
     if (!secondClick) {
       if (grid[r][c].getPiece() == null) {
         return;
@@ -135,6 +135,7 @@ public class Board{
       return;
     }
     moveWhite = !moveWhite;
+    GameFrame.startTime = System.currentTimeMillis();
     if (grid[r][c].hasPiece()) {
       grid[r][c].capture();
     }
@@ -155,6 +156,24 @@ public class Board{
       for (int j = 0; j < grid[0].length; j++) {
         grid[i][j].draw(g);
       }
+    }
+    //g.setColor(new Color(255, 255, 0, 75));
+    g.setColor(Color.YELLOW);
+    int x = 22;
+    if (moveWhite) {
+      x = 518;
+    }
+    g.fillRect(x, 50, 50, 25);
+    g.setColor(Color.YELLOW);
+    g.drawRect(x, 50, 50, 25);
+    
+    g.setColor(Color.WHITE);
+    if (moveWhite) {
+      GameFrame.btime.setVisible(false);
+      GameFrame.wtime.setVisible(true);
+    } else {
+      GameFrame.wtime.setVisible(false);
+      GameFrame.btime.setVisible(true);
     }
   }
 }

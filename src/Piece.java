@@ -55,8 +55,8 @@ public abstract class Piece{
 	}
 
   public void draw(Graphics g) {
-    int x = file * Square.getSide();
-    int y = rank * Square.getSide();
+    int x = file * Square.getSide()+2*Square.getSide();
+    int y = rank * Square.getSide()+Square.getSide()/2;
     int w = Square.getSide();
     int h = Square.getSide();
     g.drawImage(image, x, y,null);

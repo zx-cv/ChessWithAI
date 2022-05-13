@@ -16,10 +16,13 @@ public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
 	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
+	public static double startTime = 1.0 * System.currentTimeMillis();
+	public static JLabel wtime, btime;
 
 	// starting dimensions of window (pixels)
-	public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
-	
+	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
+	public static final int WIDTH = 12*Square.getSide(), HEIGHT = 9*Square.getSide(), REFRESH = 40;
+
 	// where the game objects are displayed
 	private JPanel panel = new JPanel() {
 		@Override
@@ -50,6 +53,20 @@ public class GameFrame extends JFrame {
 		panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.add(panel);
 		this.pack();
+		panel.setLayout(null);
+		wtime = new JLabel(getTime());
+		wtime.setBounds(524, 25, 50, 25);
+		panel.add(wtime);
+		btime = new JLabel(getTime());
+		btime.setBounds(29, 25, 50, 25);
+		panel.add(btime);
+		JLabel black = new JLabel("Black");
+		black.setBounds(30, 50, 50, 25);
+		panel.add(black);
+		JLabel white = new JLabel("White");
+		white.setBounds(525, 50, 50, 25);
+		panel.add(white);
+
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
@@ -63,6 +80,8 @@ public class GameFrame extends JFrame {
 				if (Game.gameOver) return;
 				game.updateGame();
 				panel.repaint();
+				wtime.setText(getTime());
+				btime.setText(getTime());
 			}
 		});
 		
@@ -73,9 +92,37 @@ public class GameFrame extends JFrame {
 	}
 
 	protected void clickedAt(MouseEvent me) {
-		System.out.println("You just clicked "+me);	
+		//System.out.println("You just clicked "+me);	
 		board.justClicked(me);
 		panel.repaint();
+	}
+
+	private String getTime() {
+		// String s = "";
+		// double t = (System.currentTimeMillis() - startTime) / 1000 - 1;
+		// if (t >= 3600) {
+		// 	s += (int) t / 3600;
+		// 	s += ":";
+		// }
+		// t %= 3600;
+		// int i = (int)t / 60;
+		// if (i < 10) s += "0";
+		// s +=  i + ":";
+		// i = (int)t % 60;
+		// if (i < 10) s += "0";
+		// s += i;
+		// //System.out.println(s);
+		// return s;
+		String s = "";
+		double t = 600 - ((System.currentTimeMillis() - startTime) / 1000 - 1);
+		int i = (int)t / 60;
+		if (i < 10) s += "0";
+		s +=  i + ":";
+		i = (int)t % 60;
+		if (i < 10) s += "0";
+		s += i;
+		//System.out.println(s);
+		return s;
 	}
 
 }

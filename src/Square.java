@@ -49,11 +49,9 @@ public class Square{
   }
 
   public void draw(Graphics g) {
-    // if (isWhite) g.setColor(Color.WHITE);
-    // else g.setColor(Color.BLACK);
     if (isWhite) g.setColor(new Color(210, 180, 140));
     else g.setColor(new Color(101, 67, 33));
-    g.fillRect(rank*side, file*side, side, side);
+    g.fillRect(rank*side+2*side, file*side+side/2, side, side);
     
   }
 
