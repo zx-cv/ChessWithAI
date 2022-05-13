@@ -145,13 +145,9 @@ public class Board {
       System.out.println("Invalid move!");
       return;
     }
-<<<<<<< HEAD
-    moveWhite = !moveWhite;
     GameFrame.startTime = System.currentTimeMillis();
-=======
 
     Piece p = null;
->>>>>>> 0929b5766ae6ce1e46455b80b8e52df2f605931a
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
       grid[r][c].capture();
@@ -192,6 +188,10 @@ public class Board {
       else {
         System.out.println("CHECK");
       }
+    }
+
+    else if ((moveWhite && whiteCheckMated()) || (!moveWhite && blackCheckMated())) {
+      System.out.println("Stalemate");
     }
 
 
