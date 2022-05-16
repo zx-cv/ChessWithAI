@@ -11,7 +11,7 @@ public class Board {
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
   private boolean isWhite;
-  private boolean moveWhite = true;
+  public static boolean moveWhite = true;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
 
@@ -141,17 +141,16 @@ public class Board {
       return;
     }
 
-    if (!grid[lastClickedR][lastClickedC].hasPiece()) { // || !validMoves.contains(grid[r][c])
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) { 
       System.out.println("Invalid move!");
       return;
     }
-<<<<<<< HEAD
-    moveWhite = !moveWhite;
+    
+    if (moveWhite) GameFrame.wCurr = GameFrame.getTime();
+    else GameFrame.bCurr = GameFrame.getTime();
     GameFrame.startTime = System.currentTimeMillis();
-=======
-
+    
     Piece p = null;
->>>>>>> 0929b5766ae6ce1e46455b80b8e52df2f605931a
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
       grid[r][c].capture();

@@ -16,8 +16,9 @@ public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
 	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
-	public static double startTime = 1.0 * System.currentTimeMillis();
+	public static long startTime = System.currentTimeMillis();
 	public static JLabel wtime, btime;
+	public static long wCurr = 10, bCurr = 600;
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
@@ -54,10 +55,10 @@ public class GameFrame extends JFrame {
 		this.add(panel);
 		this.pack();
 		panel.setLayout(null);
-		wtime = new JLabel(getTime());
+		wtime = new JLabel(timeToString(getTime()));
 		wtime.setBounds(524, 25, 50, 25);
 		panel.add(wtime);
-		btime = new JLabel(getTime());
+		btime = new JLabel(timeToString(getTime()));
 		btime.setBounds(29, 25, 50, 25);
 		panel.add(btime);
 		JLabel black = new JLabel("Black");
@@ -77,11 +78,14 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (Game.gameOver) return;
+				if (getTime() <= 0 || Game.gameOver) {
+					gameOver();
+					return;
+				}
 				game.updateGame();
 				panel.repaint();
-				wtime.setText(getTime());
-				btime.setText(getTime());
+				wtime.setText(timeToString(getTime()));
+				btime.setText(timeToString(getTime()));
 			}
 		});
 		
@@ -97,7 +101,7 @@ public class GameFrame extends JFrame {
 		panel.repaint();
 	}
 
-	private String getTime() {
+	public static long getTime() {
 		// String s = "";
 		// double t = (System.currentTimeMillis() - startTime) / 1000 - 1;
 		// if (t >= 3600) {
@@ -113,8 +117,23 @@ public class GameFrame extends JFrame {
 		// s += i;
 		// //System.out.println(s);
 		// return s;
+		
+		// double t = 600 - ((System.currentTimeMillis() - startTime) / 1000 - 2);
+		long t;
+		long x = System.currentTimeMillis();
+		if (Board.moveWhite) t = wCurr - ((x - startTime)/1000 - 1);
+		else t = bCurr - ((x - startTime)/1000);
+		// System.out.println("curr: " + x);
+		// System.out.println("start: " + startTime);
+		// System.out.println("x-start: " + (x-startTime));
+		// System.out.println("seconds: " + (x-startTime) / 1000);
+		// System.out.println("countdown: " + t);
+		return t;
+	}
+
+	private String timeToString(long t) {
 		String s = "";
-		double t = 600 - ((System.currentTimeMillis() - startTime) / 1000 - 1);
+		if (t < 0) Game.gameOver = true;
 		int i = (int)t / 60;
 		if (i < 10) s += "0";
 		s +=  i + ":";
@@ -123,6 +142,11 @@ public class GameFrame extends JFrame {
 		s += i;
 		//System.out.println(s);
 		return s;
+	}
+
+	public void gameOver() {
+		this.setVisible(false);
+
 	}
 
 }

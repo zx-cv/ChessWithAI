@@ -30,11 +30,9 @@ public class Game {
 	 * Right now I am checking for collisions between GameObjects
 	 */
 	public void checkGameOver() {
-		//check if checkmate
-		
-		//check for draw
-		
-		//check for stalemate
+		if (gameOver) {
+			System.exit(0);
+		}
 		
 	}
 

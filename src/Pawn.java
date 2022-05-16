@@ -8,7 +8,6 @@ public class Pawn extends Piece{
     private int y = 0;
     private boolean firstMove = true;
     private boolean secondMove = true;
-    private boolean isPawn = true;
 
     public Pawn(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
