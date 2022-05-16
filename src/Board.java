@@ -14,6 +14,7 @@ public class Board {
   private boolean moveWhite = true;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
+  private Square ghostPawn = null;
 
   public Board(boolean isWhite) {
     this.isWhite = isWhite;
@@ -27,6 +28,10 @@ public class Board {
       }
     }
     generatePieces(isWhite);
+  }
+
+  public boolean whiteMove() {
+    return moveWhite;
   }
 
   public ArrayList<Square[][]> getBoardStates() {
@@ -145,7 +150,23 @@ public class Board {
       System.out.println("Invalid move!");
       return;
     }
-    GameFrame.startTime = System.currentTimeMillis();
+    //GameFrame.startTime = System.currentTimeMillis();
+
+    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r-lastClickedR) == 2) {
+      ghostPawn = grid[(r+lastClickedR)/2][c];
+      ghostPawn.placePiece(new Pawn(moveWhite, (r+lastClickedR)/2, c));
+    }
+    if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
+      int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
+      grid[ghostPawn.getRank()+dir][ghostPawn.getFile()].capture();
+      ghostPawn.capture();
+      ghostPawn = null;
+    }
+
+    if (ghostPawn != null && moveWhite ^ ghostPawn.getPiece().isWhite) {
+      ghostPawn.capture();
+      ghostPawn = null;
+    }
 
     Piece p = null;
     if (grid[r][c].hasPiece()) {

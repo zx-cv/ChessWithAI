@@ -42,9 +42,9 @@ public class Pawn extends Piece{
             if (board[rank+dir][f].hasPiece() && board[rank+dir][f].getPiece().isWhite() != isWhite) {
                 ans.add(board[rank+dir][f]);
             }
-            if (board[rank][f].hasPiece() && board[rank][f].getPiece().isPawn() && ((Pawn) board[rank][f].getPiece()).secondMove && (board[rank][f].getPiece().isWhite() != this.isWhite)) {
-                ans.add(board[rank+dir][f]);
-            }
+            // if (ddboard[rank][f].hasPiece() && board[rank][f].getPiece().isPawn() && ((Pawn) board[rank][f].getPiece()).secondMove && (board[rank][f].getPiece().isWhite() != this.isWhite)) {
+            //     ans.add(board[rank+dir][f]);
+            // }
         }
         return ans;
     }

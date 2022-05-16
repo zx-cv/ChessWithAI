@@ -17,6 +17,7 @@ public class GameFrame extends JFrame {
 	private Game game = new Game();
 	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
 	public static double startTime = 1.0 * System.currentTimeMillis();
+	public static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
 	public static JLabel wtime, btime;
 
 	// starting dimensions of window (pixels)
@@ -114,7 +115,14 @@ public class GameFrame extends JFrame {
 		// //System.out.println(s);
 		// return s;
 		String s = "";
-		double t = 600 - ((System.currentTimeMillis() - startTime) / 1000 - 1);
+		double t;
+		if (board.whiteMove()) {
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			whiteTimeLeft = t;
+		} else {
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - whiteTimeLeft;
+			blackTimeLeft = t;
+		}
 		int i = (int)t / 60;
 		if (i < 10) s += "0";
 		s +=  i + ":";
