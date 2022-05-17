@@ -2,12 +2,15 @@ package src;
 
 import java.util.*;
 
-public class Rook extends Piece{
-    static int x=360, w = 90, h=90;
+public class Rook extends Piece {
+    static int x = 360, w = 90, h = 90;
     private int y = 0;
-    public Rook(boolean isWhite, int rank, int file){
+    private int moves = 0;
+
+    public Rook(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
-        if (!this.isWhite) y = 90;
+        if (!this.isWhite)
+            y = 90;
         this.rank = rank;
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
@@ -77,5 +80,19 @@ public class Rook extends Piece{
         }
 
         return ans;
+    }
+
+    public void moveTo(int r, int f) {
+        moves++;
+        this.rank = r;
+        this.file = f;
+    }
+
+    public boolean moved() {
+        return moves > 1;
+    }
+
+    public void subtractMove() {
+        moves--;
     }
 }
