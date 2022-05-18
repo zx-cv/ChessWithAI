@@ -58,7 +58,7 @@ public class Game {
 		for (Piece p: GameFrame.board.getBlackPieces()) {
 			p.draw(g);
 		}
-
+		
 	}
 
     

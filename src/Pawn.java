@@ -2,16 +2,18 @@ package src;
 
 import java.util.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class Pawn extends Piece{
-    static int x=450, w = 90, h=90;
+    public static int x=450, w = 90, h=90;
     private int y = 0;
     private boolean firstMove = true;
     private boolean secondMove = true;
+    public int endrow = 0;
 
     public Pawn(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
-        if (!this.isWhite) y = 90;
+        if (!this.isWhite)  {y = 90; endrow = 7;}
         this.rank = rank;
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
@@ -31,19 +33,19 @@ public class Pawn extends Piece{
                 ans.add(board[rank+(2*dir)][file]);
             }
         }
-        if (!board[rank+dir][file].hasPiece()) {
+        if ((rank+dir >= 0 && rank+dir < 7) && !board[rank+dir][file].hasPiece()) {
             ans.add(board[rank+dir][file]);
         }
         for (int f = file - 1; f < file + 2; f += 2) {
-            if (f < 0 || f > 7) {
+            if (f < 0 || f > 7 || rank+dir < 0 || rank+dir > 7) {
                 continue;
             }
             if (board[rank+dir][f].hasPiece() && board[rank+dir][f].getPiece().isWhite() != isWhite) {
                 ans.add(board[rank+dir][f]);
             }
-            if (board[rank][f].hasPiece() && board[rank][f].getPiece().isPawn() && ((Pawn) board[rank][f].getPiece()).secondMove && (board[rank][f].getPiece().isWhite() != this.isWhite)) {
-                ans.add(board[rank+dir][f]);
-            }
+            // if (ddboard[rank][f].hasPiece() && board[rank][f].getPiece().isPawn() && ((Pawn) board[rank][f].getPiece()).secondMove && (board[rank][f].getPiece().isWhite() != this.isWhite)) {
+            //     ans.add(board[rank+dir][f]);
+            // }
         }
         return ans;
     }
@@ -72,6 +74,41 @@ public class Pawn extends Piece{
         } else if (secondMove) {
             secondMove = false;
         }
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        super.draw(g);
+        if (rank != endrow) {return;}
+        int iy = isWhite? 0:90; //image y
+        GameFrame.pawnPromotion.setVisible(true);
+        GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), y+Square.getSide()/2, Square.getSide(), 4*Square.getSide());
+        GameFrame.pawnPromotion.setBackground(Color.WHITE);
+        GameFrame.pawnPromotion.setOpaque(true);
+        
+        ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, iy, w, h)); 
+        JLabel qlabel = new JLabel();
+        qlabel.setIcon(q);
+        GameFrame.pawnPromotion.add(qlabel);
+        ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, iy, w, h)); 
+        JLabel rlabel = new JLabel();
+        rlabel.setIcon(r);
+        GameFrame.pawnPromotion.add(rlabel);
+        ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, iy, w, h)); 
+        JLabel blabel = new JLabel();
+        blabel.setIcon(b);
+        GameFrame.pawnPromotion.add(blabel);
+        ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, iy, w, h)); 
+        JLabel klabel = new JLabel();
+        klabel.setIcon(k);
+        GameFrame.pawnPromotion.add(klabel);
+       
+        //g.drawImage(openImageFromSpriteSheet(Queen.x, iy, w, h), x, y+Square.getSide()/2, null);
+        //g.drawImage(openImageFromSpriteSheet(Rook.x, iy, w, h), x, y+Square.getSide()+Square.getSide()/2, null);
+        //g.drawImage(openImageFromSpriteSheet(Bishop.x, iy, w, h), x, y+2*Square.getSide()+Square.getSide()/2, null);
+        //g.drawImage(openImageFromSpriteSheet(Knight.x, iy, w, h), x, y+3*Square.getSide()+Square.getSide()/2, null);
+        
+        GameFrame.pawnPromotion.repaint();
     }
     
 }

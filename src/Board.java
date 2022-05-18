@@ -10,13 +10,15 @@ public class Board {
   private static ArrayList<Piece> blackPieces = new ArrayList<>();
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
-  private boolean isWhite;
+  private static boolean isWhite;
   public static boolean moveWhite = true;
+  private boolean promoteClick = false;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
+  private Square ghostPawn = null;
 
   public Board(boolean isWhite) {
-    this.isWhite = isWhite;
+    setWhite(isWhite);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if ((i % 2 + j % 2) % 2 == 0) {
@@ -27,6 +29,10 @@ public class Board {
       }
     }
     generatePieces(isWhite);
+  }
+
+  public boolean whiteMove() {
+    return moveWhite;
   }
 
   public ArrayList<Square[][]> getBoardStates() {
@@ -113,8 +119,11 @@ public class Board {
     }
   }
 
-  public boolean isWhite() {
+  public static boolean isWhite() {
     return isWhite;
+  }
+  public static void setWhite(boolean b) {
+    isWhite = b;
   }
 
   public void justClicked(MouseEvent me) {
@@ -134,6 +143,31 @@ public class Board {
       return;
     }
 
+    if (promoteClick) {
+      
+      Piece p = null;
+      switch((r-lastClickedR)) {
+        case 0: p = new Queen(isWhite, r, c-1); break;
+        case 1: p = new Rook(isWhite, r, c-1); break;
+        case 2: p = new Bishop(isWhite, r, c-1); break;
+        case 3: p = new Knight(isWhite, r, c-1); break;
+      }
+      if (moveWhite) {
+        whitePieces.remove(grid[lastClickedR][lastClickedC].getPiece());
+        whitePieces.add(p);
+      } else {
+        blackPieces.remove(grid[lastClickedR][lastClickedC].getPiece());
+        blackPieces.add(p);
+      }
+      grid[lastClickedR][lastClickedC].removePiece();
+      grid[lastClickedR][lastClickedC].placePiece(p);
+      promoteClick = !promoteClick;
+      secondClick = !secondClick;
+      moveWhite = !moveWhite;
+      GameFrame.pawnPromotion.setVisible(false);
+      GameFrame.pawnPromotion.repaint();
+      return;
+    }
     grid[lastClickedR][lastClickedC].getPiece().select(false);
     if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c])
         || (grid[r][c] == grid[lastClickedR][lastClickedC])) {
@@ -145,11 +179,24 @@ public class Board {
       System.out.println("Invalid move!");
       return;
     }
-    
-    if (moveWhite) GameFrame.wCurr = GameFrame.getTime();
-    else GameFrame.bCurr = GameFrame.getTime();
-    GameFrame.startTime = System.currentTimeMillis();
-    
+    //GameFrame.startTime = System.currentTimeMillis();
+
+    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r-lastClickedR) == 2) {
+      ghostPawn = grid[(r+lastClickedR)/2][c];
+      ghostPawn.placePiece(new Pawn(moveWhite, (r+lastClickedR)/2, c));
+    }
+    if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
+      int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
+      grid[ghostPawn.getRank()+dir][ghostPawn.getFile()].capture();
+      ghostPawn.capture();
+      ghostPawn = null;
+    }
+
+    if (ghostPawn != null && moveWhite ^ ghostPawn.getPiece().isWhite) {
+      ghostPawn.capture();
+      ghostPawn = null;
+    }
+
     Piece p = null;
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
@@ -173,6 +220,12 @@ public class Board {
         }
       }
       secondClick = false;
+    }
+    
+    if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
+      promoteClick = true;
+      lastClickedC = c;
+      lastClickedR = r;
       return;
     }
 
@@ -191,6 +244,10 @@ public class Board {
       else {
         System.out.println("CHECK");
       }
+    }
+
+    else if ((moveWhite && whiteCheckMated()) || (!moveWhite && blackCheckMated())) {
+      System.out.println("Stalemate");
     }
 
 

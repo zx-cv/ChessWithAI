@@ -20,6 +20,9 @@ public abstract class Piece{
   public void setImage(Image i) {
     if (image == null) image = i;
   }
+  public Image getImage() {
+    return image;
+  }
 
   public boolean isWhite() {
     return isWhite;
