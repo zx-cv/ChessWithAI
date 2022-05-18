@@ -140,6 +140,49 @@ public class Board {
     }
 
     grid[lastClickedR][lastClickedC].getPiece().select(false);
+    if (grid[lastClickedR][lastClickedC].getPiece() instanceof King) {
+      if (moveWhite) {
+        if (lastClickedR == r) {
+          if (lastClickedC - c == 2) {
+            if (isWhite && canQueenSideCastle(true)) {
+              queenSideCastle(true);
+              return;
+            } else if (canKingSideCastle(true)) {
+              kingSideCastle(true);
+              return;
+            }
+          } else if (lastClickedC - c == -2) {
+            if (isWhite && canKingSideCastle(true)) {
+              kingSideCastle(true);
+              return;
+            } else if (canQueenSideCastle(true)) {
+              queenSideCastle(true);
+              return;
+            }
+          }
+        }
+      } else {
+        if (lastClickedR == r) {
+          if (lastClickedC - c == 2) {
+            if (isWhite && canQueenSideCastle(false)) {
+              queenSideCastle(false);
+              return;
+            } else if (canKingSideCastle(false)) {
+              kingSideCastle(false);
+              return;
+            }
+          } else if (lastClickedC - c == -2) {
+            if (isWhite && canKingSideCastle(false)) {
+              kingSideCastle(false);
+              return;
+            } else if (canQueenSideCastle(false)) {
+              queenSideCastle(false);
+              return;
+            }
+          }
+        }
+      }
+    }
     if (!grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this).contains(grid[r][c])
         || (grid[r][c] == grid[lastClickedR][lastClickedC])) {
       secondClick = false;
@@ -224,7 +267,6 @@ public class Board {
       System.out.println("Stalemate");
     }
 
-    System.out.println(canQueenSideCastle(false));
 
     boardStates.add(grid.clone());
   }
@@ -371,8 +413,61 @@ public class Board {
         grid[7][4].removePiece();
         grid[7][3].placePiece(grid[7][0].getPiece());
         grid[7][0].removePiece();
+      } else {
+        grid[0][5].placePiece(wKing);
+        grid[0][3].removePiece();
+        grid[0][4].placePiece(grid[0][7].getPiece());
+        grid[0][7].removePiece();
+      }
+    } else {
+      if (isWhite) {
+        grid[0][2].placePiece(bKing);
+        grid[0][4].removePiece();
+        grid[0][3].placePiece(grid[0][0].getPiece());
+        grid[0][0].removePiece();
+      } else {
+        grid[7][5].placePiece(bKing);
+        grid[7][3].removePiece();
+        grid[7][4].placePiece(grid[7][7].getPiece());
+        grid[7][7].removePiece();
       }
     }
+    lastClickedC = -1;
+    lastClickedR = -1;
+    secondClick = false;
+    moveWhite = !moveWhite;
+  }
+
+  public void kingSideCastle(boolean whiteSide) {
+    if (whiteSide) {
+      if (isWhite) {
+        grid[7][6].placePiece(wKing);
+        grid[7][4].removePiece();
+        grid[7][5].placePiece(grid[7][7].getPiece());
+        grid[7][7].removePiece();
+      } else {
+        grid[0][1].placePiece(wKing);
+        grid[0][3].removePiece();
+        grid[0][2].placePiece(grid[0][0].getPiece());
+        grid[0][0].removePiece();
+      }
+    } else {
+      if (isWhite) {
+        grid[0][6].placePiece(bKing);
+        grid[0][4].removePiece();
+        grid[0][5].placePiece(grid[0][7].getPiece());
+        grid[0][7].removePiece();
+      } else {
+        grid[7][1].placePiece(bKing);
+        grid[7][3].removePiece();
+        grid[7][2].placePiece(grid[7][0].getPiece());
+        grid[7][0].removePiece();
+      }
+    }
+    lastClickedC = -1;
+    lastClickedR = -1;
+    secondClick = false;
+    moveWhite = !moveWhite;
   }
 
   public boolean canQueenSideCastle(boolean whiteSide) {
@@ -447,6 +542,84 @@ public class Board {
       if (bKing.moved() || blackInCheck() || !grid[row][rFile].hasPiece()
           || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()
           || grid[row][kFile].hasPiece()) {
+        return false;
+      }
+
+      // if any of the squares that the goes king through is in check then return false
+      for (int i = startCol; i < startCol + 2; i++) {
+        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }
+
+  public boolean canKingSideCastle(boolean whiteSide) {
+    ArrayList<Square> moves = new ArrayList<>();
+    if (whiteSide) {
+      // get all black moves
+      for (Piece p : blackPieces) {
+        if (p instanceof Pawn) {
+          moves.addAll(((Pawn) p).getAttackMoves(this));
+        } else {
+          moves.addAll(p.getLegalMoves(this));
+        }
+      }
+      int row;
+      int startCol;
+      int rFile;
+      if (isWhite) {
+        row = 7;
+        rFile = 7;
+        startCol = 5;
+      } else {
+        row = 0;
+        rFile = 7;
+        startCol = 5;
+      }
+      // if the king/rook has moved or there is still a piece between them then return
+      // false
+      if (wKing.moved() || whiteInCheck() || !grid[row][rFile].hasPiece()
+          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()) {
+        return false;
+      }
+
+      // if any of the squares that the king goes through is in check then return false
+      for (int i = startCol; i < startCol + 2; i++) {
+        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
+          return false;
+        }
+      }
+
+      return true;
+
+    } else {
+      // get all black moves
+      for (Piece p : whitePieces) {
+        if (p instanceof Pawn) {
+          moves.addAll(((Pawn) p).getAttackMoves(this));
+        } else {
+          moves.addAll(p.getLegalMoves(this));
+        }
+      }
+      int row;
+      int startCol;
+      int rFile;
+      if (isWhite) {
+        row = 0;
+        rFile = 7;
+        startCol = 5;
+      } else {
+        row = 7;
+        rFile = 7;
+        startCol = 5;
+      }
+      // if the king/rook has moved or there is still a piece between them then return
+      // false
+      if (bKing.moved() || blackInCheck() || !grid[row][rFile].hasPiece()
+          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()) {
         return false;
       }
 
