@@ -267,6 +267,7 @@ public class Board {
       System.out.println("Stalemate");
     }
 
+    System.out.println(canKingSideCastle(true));
 
     boardStates.add(grid.clone());
   }
@@ -576,8 +577,8 @@ public class Board {
         startCol = 5;
       } else {
         row = 0;
-        rFile = 7;
-        startCol = 5;
+        rFile = 0;
+        startCol = 1;
       }
       // if the king/rook has moved or there is still a piece between them then return
       // false
