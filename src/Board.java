@@ -10,14 +10,15 @@ public class Board {
   private static ArrayList<Piece> blackPieces = new ArrayList<>();
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
-  private boolean isWhite;
-  private boolean moveWhite = true;
+  private static boolean isWhite;
+  public static boolean moveWhite = true;
+  private boolean promoteClick = false;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
   private Square ghostPawn = null;
 
   public Board(boolean isWhite) {
-    this.isWhite = isWhite;
+    setWhite(isWhite);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if ((i % 2 + j % 2) % 2 == 0) {
@@ -118,8 +119,11 @@ public class Board {
     }
   }
 
-  public boolean isWhite() {
+  public static boolean isWhite() {
     return isWhite;
+  }
+  public static void setWhite(boolean b) {
+    isWhite = b;
   }
 
   public void justClicked(MouseEvent me) {
@@ -139,6 +143,31 @@ public class Board {
       return;
     }
 
+    if (promoteClick) {
+      
+      Piece p = null;
+      switch((r-lastClickedR)) {
+        case 0: p = new Queen(isWhite, r, c-1); break;
+        case 1: p = new Rook(isWhite, r, c-1); break;
+        case 2: p = new Bishop(isWhite, r, c-1); break;
+        case 3: p = new Knight(isWhite, r, c-1); break;
+      }
+      if (moveWhite) {
+        whitePieces.remove(grid[lastClickedR][lastClickedC].getPiece());
+        whitePieces.add(p);
+      } else {
+        blackPieces.remove(grid[lastClickedR][lastClickedC].getPiece());
+        blackPieces.add(p);
+      }
+      grid[lastClickedR][lastClickedC].removePiece();
+      grid[lastClickedR][lastClickedC].placePiece(p);
+      promoteClick = !promoteClick;
+      secondClick = !secondClick;
+      moveWhite = !moveWhite;
+      GameFrame.pawnPromotion.setVisible(false);
+      GameFrame.pawnPromotion.repaint();
+      return;
+    }
     grid[lastClickedR][lastClickedC].getPiece().select(false);
     if (grid[lastClickedR][lastClickedC].getPiece() instanceof King) {
       if (moveWhite) {
@@ -189,7 +218,7 @@ public class Board {
       return;
     }
 
-    if (!grid[lastClickedR][lastClickedC].hasPiece()) { // || !validMoves.contains(grid[r][c])
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) { 
       System.out.println("Invalid move!");
       return;
     }
@@ -239,11 +268,20 @@ public class Board {
         }
       }
       secondClick = false;
+<<<<<<< HEAD
+    }
+    
+    if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
+      promoteClick = true;
+      lastClickedC = c;
+      lastClickedR = r;
+=======
       if (movingPiece instanceof Rook) {
         ((Rook) movingPiece).subtractMove();
       } else if (movingPiece instanceof King) {
         ((King) movingPiece).subtractMove();
       }
+>>>>>>> 6253b68ebba30eebb74bb7239532d9312c4f5ddb
       return;
     }
 

@@ -19,6 +19,9 @@ public class GameFrame extends JFrame {
 	public static double startTime = 1.0 * System.currentTimeMillis();
 	public static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
 	public static JLabel wtime, btime;
+	public static long wCurr = 10, bCurr = 600;
+	public static JLabel pawnPromotion;
+	//private PawnMenu pm;
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
@@ -40,6 +43,7 @@ public class GameFrame extends JFrame {
 
 	public GameFrame(String string) {
 		super(string);
+		//pm = new PawnMenu(string);
 		setUpStuff();
 	}
 
@@ -67,6 +71,10 @@ public class GameFrame extends JFrame {
 		JLabel white = new JLabel("White");
 		white.setBounds(525, 50, 50, 25);
 		panel.add(white);
+		pawnPromotion = new JLabel();
+		pawnPromotion.setLayout(new BoxLayout(pawnPromotion, BoxLayout.Y_AXIS));
+		panel.add(pawnPromotion);
+
 
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -78,7 +86,10 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (Game.gameOver) return;
+				if (getTime().equals("00:00") || Game.gameOver) {
+					gameOver();
+					return;
+				}
 				game.updateGame();
 				panel.repaint();
 				wtime.setText(getTime());
@@ -98,7 +109,7 @@ public class GameFrame extends JFrame {
 		panel.repaint();
 	}
 
-	private String getTime() {
+	// public static long getTime() {
 		// String s = "";
 		// double t = (System.currentTimeMillis() - startTime) / 1000 - 1;
 		// if (t >= 3600) {
@@ -114,13 +125,28 @@ public class GameFrame extends JFrame {
 		// s += i;
 		// //System.out.println(s);
 		// return s;
+		
+		// double t = 600 - ((System.currentTimeMillis() - startTime) / 1000 - 2);
+		// long t;
+		// long x = System.currentTimeMillis();
+		// if (Board.moveWhite) t = wCurr - ((x - startTime)/1000 - 1);
+		// else t = bCurr - ((x - startTime)/1000);
+		// System.out.println("curr: " + x);
+		// System.out.println("start: " + startTime);
+		// System.out.println("x-start: " + (x-startTime));
+		// System.out.println("seconds: " + (x-startTime) / 1000);
+		// System.out.println("countdown: " + t);
+		// return t;
+	// }
+
+	private String getTime() {
 		String s = "";
 		double t;
 		if (board.whiteMove()) {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - blackTimeLeft;
 			whiteTimeLeft = t;
 		} else {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - whiteTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
 		int i = (int)t / 60;
@@ -131,6 +157,11 @@ public class GameFrame extends JFrame {
 		s += i;
 		//System.out.println(s);
 		return s;
+	}
+
+	public void gameOver() {
+		this.setVisible(false);
+
 	}
 
 }
