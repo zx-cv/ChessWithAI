@@ -15,7 +15,7 @@ import javax.swing.*;
 public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
-	public static Board board = new Board(false); // i chose a random color but maybe we could make it user input?
+	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
 	public static double startTime = 1.0 * System.currentTimeMillis();
 	public static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
 	public static JLabel wtime, btime;

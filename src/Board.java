@@ -122,6 +122,7 @@ public class Board {
   public static boolean isWhite() {
     return isWhite;
   }
+
   public static void setWhite(boolean b) {
     isWhite = b;
   }
@@ -144,13 +145,21 @@ public class Board {
     }
 
     if (promoteClick) {
-      
+
       Piece p = null;
-      switch((r-lastClickedR)) {
-        case 0: p = new Queen(isWhite, r, c-1); break;
-        case 1: p = new Rook(isWhite, r, c-1); break;
-        case 2: p = new Bishop(isWhite, r, c-1); break;
-        case 3: p = new Knight(isWhite, r, c-1); break;
+      switch ((r - lastClickedR)) {
+        case 0:
+          p = new Queen(isWhite, r, c - 1);
+          break;
+        case 1:
+          p = new Rook(isWhite, r, c - 1);
+          break;
+        case 2:
+          p = new Bishop(isWhite, r, c - 1);
+          break;
+        case 3:
+          p = new Knight(isWhite, r, c - 1);
+          break;
       }
       if (moveWhite) {
         whitePieces.remove(grid[lastClickedR][lastClickedC].getPiece());
@@ -218,19 +227,19 @@ public class Board {
       return;
     }
 
-    if (!grid[lastClickedR][lastClickedC].hasPiece()) { 
+    if (!grid[lastClickedR][lastClickedC].hasPiece()) {
       System.out.println("Invalid move!");
       return;
     }
-    //GameFrame.startTime = System.currentTimeMillis();
+    // GameFrame.startTime = System.currentTimeMillis();
 
-    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r-lastClickedR) == 2) {
-      ghostPawn = grid[(r+lastClickedR)/2][c];
-      ghostPawn.placePiece(new Pawn(moveWhite, (r+lastClickedR)/2, c));
+    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r - lastClickedR) == 2) {
+      ghostPawn = grid[(r + lastClickedR) / 2][c];
+      ghostPawn.placePiece(new Pawn(moveWhite, (r + lastClickedR) / 2, c));
     }
     if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
       int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
-      grid[ghostPawn.getRank()+dir][ghostPawn.getFile()].capture();
+      grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].capture();
       ghostPawn.capture();
       ghostPawn = null;
     }
@@ -268,28 +277,24 @@ public class Board {
         }
       }
       secondClick = false;
-<<<<<<< HEAD
-    }
-    
-    if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
-      promoteClick = true;
-      lastClickedC = c;
-      lastClickedR = r;
-=======
       if (movingPiece instanceof Rook) {
         ((Rook) movingPiece).subtractMove();
       } else if (movingPiece instanceof King) {
         ((King) movingPiece).subtractMove();
       }
->>>>>>> 6253b68ebba30eebb74bb7239532d9312c4f5ddb
       return;
+    }
+
+    if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
+      promoteClick = true;
+      lastClickedC = c;
+      lastClickedR = r;
     }
 
     lastClickedC = -1;
     lastClickedR = -1;
     secondClick = false;
     moveWhite = !moveWhite;
-
 
     if (blackInCheck() || whiteInCheck()) {
       if (whiteCheckMated()) {
@@ -511,165 +516,109 @@ public class Board {
 
   public boolean canQueenSideCastle(boolean whiteSide) {
     ArrayList<Square> moves = new ArrayList<>();
+    ArrayList<Piece> pieces;
+    int row;
+    King king;
+    boolean inCheck;
     if (whiteSide) {
-      // get all black moves
-      for (Piece p : blackPieces) {
-        if (p instanceof Pawn) {
-          moves.addAll(((Pawn) p).getAttackMoves(this));
-        } else {
-          moves.addAll(p.getLegalMoves(this));
-        }
-      }
-      int row;
-      int startCol;
-      int rFile;
-      int kFile;
-      if (isWhite) {
-        row = 7;
-        rFile = 0;
-        startCol = 2;
-        kFile = 1;
-      } else {
-        row = 0;
-        rFile = 7;
-        startCol = 4;
-        kFile = 6;
-      }
-      // if the king/rook has moved or there is still a piece between them then return
-      // false
-      if (wKing.moved() || whiteInCheck() || !grid[row][rFile].hasPiece()
-          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()
-          || grid[row][kFile].hasPiece()) {
-        return false;
-      }
-
-      // if any of the squares that is the king through is in check then return false
-      for (int i = startCol; i < startCol + 2; i++) {
-        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
-          return false;
-        }
-      }
-
-      return true;
-
+      pieces = blackPieces;
+      row = isWhite ? 7 : 0;
+      king = wKing;
+      inCheck = whiteInCheck();
     } else {
-      // get all black moves
-      for (Piece p : whitePieces) {
-        if (p instanceof Pawn) {
-          moves.addAll(((Pawn) p).getAttackMoves(this));
-        } else {
-          moves.addAll(p.getLegalMoves(this));
-        }
-      }
-      int row;
-      int startCol;
-      int rFile;
-      int kFile;
-      if (isWhite) {
-        row = 0;
-        rFile = 0;
-        startCol = 2;
-        kFile = 1;
+      pieces = whitePieces;
+      row = isWhite ? 0 : 7;
+      king = bKing;
+      inCheck = blackInCheck();
+    }
+
+    // get all opposite side moves
+    for (Piece p : pieces) {
+      if (p instanceof Pawn) {
+        moves.addAll(((Pawn) p).getAttackMoves(this));
       } else {
-        row = 7;
-        rFile = 7;
-        startCol = 4;
-        kFile = 6;
+        moves.addAll(p.getLegalMoves(this));
       }
-      // if the king/rook has moved or there is still a piece between them then return
-      // false
-      if (bKing.moved() || blackInCheck() || !grid[row][rFile].hasPiece()
-          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()
-          || grid[row][kFile].hasPiece()) {
+    }
+    int startCol;
+    int rFile;
+    int kFile;
+    if (isWhite) {
+      rFile = 0;
+      startCol = 2;
+      kFile = 1;
+    } else {
+      rFile = 7;
+      startCol = 4;
+      kFile = 6;
+    }
+    // if the king/rook has moved or there is still a piece between them then return
+    // false
+    if (king.moved() || inCheck || !grid[row][rFile].hasPiece()
+        || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()
+        || grid[row][kFile].hasPiece()) {
+      return false;
+    }
+
+    // if any of the squares that is the king through is in check then return false
+    for (int i = startCol; i < startCol + 2; i++) {
+      if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
         return false;
       }
-
-      // if any of the squares that the goes king through is in check then return false
-      for (int i = startCol; i < startCol + 2; i++) {
-        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
-          return false;
-        }
-      }
-
-      return true;
     }
+
+    return true;
   }
 
   public boolean canKingSideCastle(boolean whiteSide) {
     ArrayList<Square> moves = new ArrayList<>();
+    ArrayList<Piece> pieces;
+    int row;
+    King king;
+    boolean inCheck;
     if (whiteSide) {
-      // get all black moves
-      for (Piece p : blackPieces) {
-        if (p instanceof Pawn) {
-          moves.addAll(((Pawn) p).getAttackMoves(this));
-        } else {
-          moves.addAll(p.getLegalMoves(this));
-        }
-      }
-      int row;
-      int startCol;
-      int rFile;
-      if (isWhite) {
-        row = 7;
-        rFile = 7;
-        startCol = 5;
-      } else {
-        row = 0;
-        rFile = 0;
-        startCol = 1;
-      }
-      // if the king/rook has moved or there is still a piece between them then return
-      // false
-      if (wKing.moved() || whiteInCheck() || !grid[row][rFile].hasPiece()
-          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()) {
-        return false;
-      }
-
-      // if any of the squares that the king goes through is in check then return false
-      for (int i = startCol; i < startCol + 2; i++) {
-        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
-          return false;
-        }
-      }
-
-      return true;
-
+      pieces = blackPieces;
+      row = isWhite ? 7 : 0;
+      king = wKing;
+      inCheck = whiteInCheck();
     } else {
-      // get all black moves
-      for (Piece p : whitePieces) {
-        if (p instanceof Pawn) {
-          moves.addAll(((Pawn) p).getAttackMoves(this));
-        } else {
-          moves.addAll(p.getLegalMoves(this));
-        }
-      }
-      int row;
-      int startCol;
-      int rFile;
-      if (isWhite) {
-        row = 0;
-        rFile = 7;
-        startCol = 5;
+      pieces = whitePieces;
+      row = isWhite ? 0 : 7;
+      king = bKing;
+      inCheck = blackInCheck();
+    }
+    // get all black moves
+    for (Piece p : pieces) {
+      if (p instanceof Pawn) {
+        moves.addAll(((Pawn) p).getAttackMoves(this));
       } else {
-        row = 7;
-        rFile = 7;
-        startCol = 5;
+        moves.addAll(p.getLegalMoves(this));
       }
-      // if the king/rook has moved or there is still a piece between them then return
-      // false
-      if (bKing.moved() || blackInCheck() || !grid[row][rFile].hasPiece()
-          || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()) {
+    }
+    int startCol;
+    int rFile;
+    if (isWhite) {
+      rFile = 7;
+      startCol = 5;
+    } else {
+      rFile = 0;
+      startCol = 1;
+    }
+    // if the king/rook has moved or there is still a piece between them then return
+    // false
+    if (king.moved() || inCheck || !grid[row][rFile].hasPiece()
+        || !(grid[row][rFile].getPiece() instanceof Rook) || ((Rook) grid[row][rFile].getPiece()).moved()) {
+      return false;
+    }
+
+    // if any of the squares that the king goes through is in check then return
+    // false
+    for (int i = startCol; i < startCol + 2; i++) {
+      if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
         return false;
       }
-
-      // if any of the squares that is the king through is in check then return false
-      for (int i = startCol; i < startCol + 2; i++) {
-        if (grid[row][i].hasPiece() || moves.contains(grid[row][i])) {
-          return false;
-        }
-      }
-
-      return true;
     }
+
+    return true;
   }
 }
