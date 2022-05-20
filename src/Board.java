@@ -233,18 +233,24 @@ public class Board {
     }
     // GameFrame.startTime = System.currentTimeMillis();
 
+    //if the piece moved was a pawn that jumped a square, put a ghost pawn on the jumped square
     if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r - lastClickedR) == 2) {
+      if (ghostPawn != null && ghostPawn.hasPiece())
+        ghostPawn.capture();
       ghostPawn = grid[(r + lastClickedR) / 2][c];
       ghostPawn.placePiece(new Pawn(moveWhite, (r + lastClickedR) / 2, c));
     }
-    if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
+
+    //is the gPawn isn't null and a pawn is trying to move to the gPawn square, take the pawn connected to it
+    else if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
       int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
       grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].capture();
       ghostPawn.capture();
       ghostPawn = null;
     }
 
-    if (ghostPawn != null && moveWhite ^ ghostPawn.getPiece().isWhite) {
+    // if gPawn square isn't null and a turn has passed without claiming en passant, delete the gPawn
+    else if (ghostPawn != null && (moveWhite == ghostPawn.getPiece().isWhite)) {
       ghostPawn.capture();
       ghostPawn = null;
     }
@@ -310,8 +316,7 @@ public class Board {
       System.out.println("Stalemate");
     }
 
-    System.out.println(canKingSideCastle(true));
-
+    System.out.println(grid.hashCode());
     boardStates.add(grid.clone());
   }
 
