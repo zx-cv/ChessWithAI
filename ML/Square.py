@@ -191,3 +191,190 @@ class Knight(Piece):
 class Rook(Piece):
     def __init__(self, isWhite, rank, file):
         super(isWhite, rank, file)
+        self.moves = 0
+    
+    def getLegalMoves(self, b):
+        board = b.getGrid()
+        ans = np.array([])
+
+        r = self.rank
+        f = self.file
+        while r>0:
+            r-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while f<7:
+            f+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while r<7:
+            r+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while f>0:
+            f-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        return ans
+        
+        
+        def moveTo(self, r, f):
+            self.moves+=1
+            self.rank = r
+            self.file = f
+        
+        def moved(self):
+            return self.moves > 1
+        
+        def subtractMove(self):
+            self.moves -=1
+
+class Queen(Piece):
+    def __init__(self, isWhite, rank, file):
+        super(isWhite, rank, file)
+    
+    def getLegalMoves(self, b):
+        board = b.getGrid
+        ans = np.array([])
+
+        r = self.rank
+        f = self.file
+        while (r>0 and f>0):
+            r-=1
+            f-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                    break
+            ans.add(board[r][f])
+        
+        r=self.rank
+        f=self.file
+        while(r>0 and f<7):
+            r-=1
+            f+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r=self.rank
+        f=self.file
+        while(r < 7 and f > 0):
+            r+=1
+            f-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r=self.rank
+        f=self.file
+        while(r < 7 and f < 7):
+            r+=1
+            f+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while r>0:
+            r-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while f<7:
+            f+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while r<7:
+            r+=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+        
+        r = self.rank
+        f = self.file
+        while f>0:
+            f-=1
+            if board[r][f].hasPiece():
+                if board[r][f].getPiece().isWhite() != self.isWhite:
+                    ans.add(board[r][f])
+                break
+            ans.add(board[r][f])
+
+        return ans
+
+class King(Piece):
+    whiteKingCheck = False
+    blackKingCheck = False
+
+    def __init__(self, isWhite, rank, file):
+        super(isWhite, rank, file)
+        self.moves = 0
+    
+    def getLegalMoves(self, b):
+        board = b.getGrid()
+        ans = np.array([])
+        
+        for i in [-1,0,1]:
+            for j in [-1,0,1]:
+                if ((i==0 and j==0) or self.rank+i<0 or self.rank+i>7 or self.file+j<0 or self.file+j>7):
+                    continue
+                s = board[self.rank + i][self.file + j]
+                if (s.hasPiece() and s.getPiece().isWhite() == self.isWhite):
+                    continue
+                ans.add(s)
+        
+        return ans
+    
+    def moveTo(self, r, f):
+        self.moves+=1
+        self.rank = r
+        self.file = f
+    
+    def moved(self):
+        return self.moves>1
+    
+    def substractMove(self):
+        self.moves-=1
