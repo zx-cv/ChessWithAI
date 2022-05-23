@@ -16,6 +16,7 @@ public class Board {
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
   private Square ghostPawn = null;
+  private int afterGPawn;
 
   public Board(boolean isWhite) {
     setWhite(isWhite);
@@ -239,6 +240,7 @@ public class Board {
         ghostPawn.capture();
       ghostPawn = grid[(r + lastClickedR) / 2][c];
       ghostPawn.placePiece(new Pawn(moveWhite, (r + lastClickedR) / 2, c));
+      afterGPawn = 0;
     }
 
     //is the gPawn isn't null and a pawn is trying to move to the gPawn square, take the pawn connected to it
@@ -250,7 +252,7 @@ public class Board {
     }
 
     // if gPawn square isn't null and a turn has passed without claiming en passant, delete the gPawn
-    else if (ghostPawn != null && (moveWhite == ghostPawn.getPiece().isWhite)) {
+    if (ghostPawn != null && afterGPawn == 1) {
       ghostPawn.capture();
       ghostPawn = null;
     }
@@ -305,8 +307,10 @@ public class Board {
     if (blackInCheck() || whiteInCheck()) {
       if (whiteCheckMated()) {
         System.out.println("White Checkmated");
+        Game.gameOver = true;
       } else if (blackCheckMated()) {
         System.out.println("Black Checkmated");
+        Game.gameOver = true;
       } else {
         System.out.println("CHECK");
       }
@@ -314,9 +318,11 @@ public class Board {
 
     else if ((moveWhite && whiteCheckMated()) || (!moveWhite && blackCheckMated())) {
       System.out.println("Stalemate");
+      Game.gameOver = true;
     }
 
-    System.out.println(grid.hashCode());
+    afterGPawn++;
+
     boardStates.add(grid.clone());
   }
 
