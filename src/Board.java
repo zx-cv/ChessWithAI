@@ -80,25 +80,25 @@ public class Board {
 
     // King and Queen
     if (isWhite) {
-      grid[0][3].placePiece(new Queen(false, 0, 3));
+      grid[0][3].placePiece(new Queen(!isWhite, 0, 3));
 
-      bKing = new King(false, 0, 4);
+      bKing = new King(!isWhite, 0, 4);
       grid[0][4].placePiece(bKing);
 
-      grid[7][3].placePiece(new Queen(true, 7, 3));
+      grid[7][3].placePiece(new Queen(isWhite, 7, 3));
 
-      wKing = new King(true, 7, 4);
+      wKing = new King(isWhite, 7, 4);
       grid[7][4].placePiece(wKing);
     } else {
-      wKing = new King(true, 0, 3);
-      grid[0][3].placePiece(wKing);
+      bKing = new King(!isWhite, 0, 3);
+      grid[0][3].placePiece(bKing);
 
-      grid[0][4].placePiece(new Queen(true, 0, 4));
+      grid[0][4].placePiece(new Queen(!isWhite, 0, 4));
 
-      bKing = new King(false, 7, 3);
-      grid[7][3].placePiece(bKing);
+      wKing = new King(isWhite, 7, 3);
+      grid[7][3].placePiece(wKing);
 
-      grid[7][4].placePiece(new Queen(false, 7, 4));
+      grid[7][4].placePiece(new Queen(isWhite, 7, 4));
     }
 
     // adding each piece to blackPieces/whitePieces
@@ -127,8 +127,8 @@ public class Board {
   }
 
   public void justClicked(MouseEvent me) {
-    int r = (me.getY() - Square.getSide() / 2) / Square.getSide();
-    int c = (me.getX() - 2 * Square.getSide()) / Square.getSide();
+    int r = (me.getY() - Square.getSide()/2) / Square.getSide();
+    int c = (me.getX() - 2*Square.getSide()) / Square.getSide();
     if (!secondClick) {
       if (grid[r][c].getPiece() == null) {
         return;
@@ -253,7 +253,6 @@ public class Board {
     // if the side that just moved is still in check, undo the move
     if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
       grid[lastClickedR][lastClickedC].placePiece(movingPiece);
-      grid[r][c].removePiece();
       if (p != null) {
         grid[r][c].placePiece(p);
         if (p instanceof Rook) {
@@ -268,20 +267,12 @@ public class Board {
         }
       }
       secondClick = false;
-<<<<<<< HEAD
     }
     
     if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
       promoteClick = true;
       lastClickedC = c;
       lastClickedR = r;
-=======
-      if (movingPiece instanceof Rook) {
-        ((Rook) movingPiece).subtractMove();
-      } else if (movingPiece instanceof King) {
-        ((King) movingPiece).subtractMove();
-      }
->>>>>>> 6253b68ebba30eebb74bb7239532d9312c4f5ddb
       return;
     }
 
@@ -290,13 +281,14 @@ public class Board {
     secondClick = false;
     moveWhite = !moveWhite;
 
-
     if (blackInCheck() || whiteInCheck()) {
       if (whiteCheckMated()) {
         System.out.println("White Checkmated");
-      } else if (blackCheckMated()) {
+      }
+      else if (blackCheckMated()) {
         System.out.println("Black Checkmated");
-      } else {
+      }
+      else {
         System.out.println("CHECK");
       }
     }
@@ -319,7 +311,7 @@ public class Board {
         grid[i][j].draw(g);
       }
     }
-    // g.setColor(new Color(255, 255, 0, 75));
+    //g.setColor(new Color(255, 255, 0, 75));
     g.setColor(Color.YELLOW);
     int x = 22;
     if (moveWhite) {
@@ -328,7 +320,7 @@ public class Board {
     g.fillRect(x, 50, 50, 25);
     g.setColor(Color.YELLOW);
     g.drawRect(x, 50, 50, 25);
-
+    
     g.setColor(Color.WHITE);
     if (moveWhite) {
       GameFrame.btime.setVisible(false);
@@ -374,9 +366,9 @@ public class Board {
   }
 
   public boolean whiteCheckMated() {
-    for (Piece p : whitePieces) {
+    for (Piece p: whitePieces) {
       ArrayList<Square> moves = p.getLegalMoves(this);
-      for (Square s : moves) {
+      for(Square s: moves) {
         if (testMove(p, s)) {
           return false;
         }
@@ -386,9 +378,9 @@ public class Board {
   }
 
   public boolean blackCheckMated() {
-    for (Piece p : blackPieces) {
+    for (Piece p: blackPieces) {
       ArrayList<Square> moves = p.getLegalMoves(this);
-      for (Square s : moves) {
+      for(Square s: moves) {
         if (testMove(p, s)) {
           return false;
         }
@@ -413,12 +405,6 @@ public class Board {
     grid[toR][toC].placePiece(movingPiece);
     grid[fromR][fromC].removePiece();
 
-    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
-      ans = false;
-    }
-
-    grid[fromR][fromC].placePiece(movingPiece);
-    grid[toR][toC].removePiece();
     if (movingPiece instanceof Rook) {
       ((Rook) movingPiece).subtractMove();
       ((Rook) movingPiece).subtractMove();
@@ -426,6 +412,13 @@ public class Board {
       ((King) movingPiece).subtractMove();
       ((King) movingPiece).subtractMove();
     }
+
+    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
+      ans = false;
+    }
+
+    grid[fromR][fromC].placePiece(movingPiece);
+    grid[toR][toC].removePiece();
     if (p != null) {
       grid[toR][toC].placePiece(p);
       if (p.isWhite()) {

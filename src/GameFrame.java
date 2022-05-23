@@ -21,7 +21,6 @@ public class GameFrame extends JFrame {
 	public static JLabel wtime, btime;
 	public static long wCurr = 10, bCurr = 600;
 	public static JLabel pawnPromotion;
-	//private PawnMenu pm;
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
@@ -149,6 +148,7 @@ public class GameFrame extends JFrame {
 			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
+		if (t == 0) Game.gameOver = true;
 		int i = (int)t / 60;
 		if (i < 10) s += "0";
 		s +=  i + ":";

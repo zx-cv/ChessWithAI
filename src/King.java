@@ -3,8 +3,8 @@ import java.util.*;
 
 public class King extends Piece{
   static int x=0, w = 90, h=90;
-  private int moves = 0; //if moves is > 1 then it has moved
   private int y = 0;
+  private int moves = 0; //if moves is > 1 then it has moved
   private static boolean whiteKingCheck;
   private static boolean blackKingCheck;
 
@@ -48,6 +48,4 @@ public class King extends Piece{
   public void subtractMove() {
     moves--;
   }
-
-  
 }

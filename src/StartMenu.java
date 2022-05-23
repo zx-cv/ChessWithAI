@@ -12,11 +12,16 @@ import javax.imageio.ImageIO;
 
 import javax.swing.*;
 
-public class PawnMenu extends JFrame{
+
+public class StartMenu extends JFrame{
     private GameFrame gf;
 
 	// starting dimensions of window (pixels)
-	public static final int WIDTH = Square.getSide(), HEIGHT = 4*Square.getSide(), REFRESH = 40;
+	public static final int WIDTH = 12*Square.getSide(), HEIGHT = 9*Square.getSide(), REFRESH = 40;
+
+	JMenuBar menuBar;
+    JMenu menu;
+    JMenuItem menuItem;
 
 	// where the game objects are displayed
 	private JPanel panel = new JPanel() {
@@ -30,7 +35,7 @@ public class PawnMenu extends JFrame{
 	};
 	private Timer timer;//timer that runs the game
 
-    public PawnMenu(String s) {
+    public StartMenu(String s) {
         super(s);
         setUpStuff();
     }
@@ -63,7 +68,36 @@ public class PawnMenu extends JFrame{
 		
 		timer.start();
 		this.setVisible(true);
+		menu.setVisible(true);
 		panel.requestFocusInWindow();
+
+		//Create the menu bar.
+		menuBar = new JMenuBar();
+
+		//Build the first menu.
+		menu = new JMenu("File");
+		menu.setMnemonic(KeyEvent.VK_F);
+		menu.getAccessibleContext().setAccessibleDescription("File menu");
+		menuBar.add(menu);
+	
+		//JMenuItems show the menu items
+		menuItem = new JMenuItem("New");
+		menuItem.setMnemonic(KeyEvent.VK_N);
+		menu.add(menuItem);
+	
+		// add a separator
+		menu.addSeparator();
+	
+		menuItem = new JMenuItem("Pause");
+		menuItem.setMnemonic(KeyEvent.VK_P);
+		menu.add(menuItem);
+	
+		menuItem = new JMenuItem("Exit");
+		menuItem.setMnemonic(KeyEvent.VK_E);
+		menu.add(menuItem);
+	
+		// add menu bar to frame
+		gf.setJMenuBar(menuBar);
 
 	}
 
