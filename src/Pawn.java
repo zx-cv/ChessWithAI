@@ -17,6 +17,7 @@ public class Pawn extends Piece{
         this.rank = rank;
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
+        this.value = 1;
     }
     
     @Override
@@ -33,7 +34,7 @@ public class Pawn extends Piece{
                 ans.add(board[rank+(2*dir)][file]);
             }
         }
-        if ((rank+dir >= 0 && rank+dir < 7) && !board[rank+dir][file].hasPiece()) {
+        if ((rank+dir >= 0 && rank+dir <= 7) && !board[rank+dir][file].hasPiece()) {
             ans.add(board[rank+dir][file]);
         }
         for (int f = file - 1; f < file + 2; f += 2) {
@@ -80,28 +81,48 @@ public class Pawn extends Piece{
     public void draw(Graphics g) {
         super.draw(g);
         if (rank != endrow) {return;}
-        int iy = isWhite? 0:90; //image y
         GameFrame.pawnPromotion.setVisible(true);
-        GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), y+Square.getSide()/2, Square.getSide(), 4*Square.getSide());
         GameFrame.pawnPromotion.setBackground(Color.WHITE);
         GameFrame.pawnPromotion.setOpaque(true);
         
-        ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, iy, w, h)); 
-        JLabel qlabel = new JLabel();
-        qlabel.setIcon(q);
-        GameFrame.pawnPromotion.add(qlabel);
-        ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, iy, w, h)); 
-        JLabel rlabel = new JLabel();
-        rlabel.setIcon(r);
-        GameFrame.pawnPromotion.add(rlabel);
-        ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, iy, w, h)); 
-        JLabel blabel = new JLabel();
-        blabel.setIcon(b);
-        GameFrame.pawnPromotion.add(blabel);
-        ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, iy, w, h)); 
-        JLabel klabel = new JLabel();
-        klabel.setIcon(k);
-        GameFrame.pawnPromotion.add(klabel);
+        if (isWhite) {
+            GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), y+Square.getSide()/2, Square.getSide(), 4*Square.getSide());
+            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, 0, w, h)); 
+            JLabel qlabel = new JLabel();
+            qlabel.setIcon(q);
+            GameFrame.pawnPromotion.add(qlabel);
+            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, 0, w, h)); 
+            JLabel rlabel = new JLabel();
+            rlabel.setIcon(r);
+            GameFrame.pawnPromotion.add(rlabel);
+            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, 0, w, h)); 
+            JLabel blabel = new JLabel();
+            blabel.setIcon(b);
+            GameFrame.pawnPromotion.add(blabel);
+            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, 0, w, h)); 
+            JLabel klabel = new JLabel();
+            klabel.setIcon(k);
+            GameFrame.pawnPromotion.add(klabel);
+        } else {
+            GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), this.rank*Square.getSide()-2*Square.getSide()-Square.getSide()/2, Square.getSide(), 4*Square.getSide());
+            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, 90, w, h)); 
+            JLabel qlabel = new JLabel();
+            qlabel.setIcon(q);
+            GameFrame.pawnPromotion.add(qlabel);
+            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, 90, w, h)); 
+            JLabel rlabel = new JLabel();
+            rlabel.setIcon(r);
+            GameFrame.pawnPromotion.add(rlabel);
+            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, 90, w, h)); 
+            JLabel blabel = new JLabel();
+            blabel.setIcon(b);
+            GameFrame.pawnPromotion.add(blabel);
+            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, 90, w, h)); 
+            JLabel klabel = new JLabel();
+            klabel.setIcon(k);
+            GameFrame.pawnPromotion.add(klabel);
+        }
+        
        
         //g.drawImage(openImageFromSpriteSheet(Queen.x, iy, w, h), x, y+Square.getSide()/2, null);
         //g.drawImage(openImageFromSpriteSheet(Rook.x, iy, w, h), x, y+Square.getSide()+Square.getSide()/2, null);

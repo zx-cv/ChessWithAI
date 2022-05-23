@@ -12,6 +12,7 @@ public class Rook extends Piece{
         this.rank = rank;
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
+        this.value = 5;
     }
 
     // doesn't account for checks

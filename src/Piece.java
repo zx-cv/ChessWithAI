@@ -11,6 +11,7 @@ public abstract class Piece{
   private static Image spriteSheet;
   private boolean selected;
   private Image image;
+  protected int value;
 
   //returns a list of legal squares it can move to
   public abstract ArrayList<Square> getLegalMoves(Board board);
@@ -49,6 +50,10 @@ public abstract class Piece{
     return file;
   }
 
+  public int getValue() {
+    return value;
+  }
+
   protected static Image openImageFromSpriteSheet(int x, int y, int w, int h) {
 		openSpriteSheet();
 		return ((BufferedImage)spriteSheet).getSubimage(x,y,w,h).getScaledInstance(Square.getSide(), Square.getSide(), BufferedImage.SCALE_SMOOTH);
@@ -75,5 +80,9 @@ public abstract class Piece{
       g.setColor(new Color(255, 255, 0, 75)); //75 = opacity
       g.fillRect(x, y, w, h);
     }
+  }
+
+  public void drawCaptured(Graphics g, int x, int y) {
+    g.drawImage(image, x, y, 20, 20, null);
   }
 }

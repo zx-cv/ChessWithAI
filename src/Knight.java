@@ -13,6 +13,7 @@ public class Knight extends Piece {
     this.rank = rank;
     this.file = file;
     this.setImage(openImageFromSpriteSheet(x, y, w, h));
+    this.value = 2; //it's technically 3, but this is for sorting purposes
   }
 
   // doesn't account for checks

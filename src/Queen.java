@@ -11,6 +11,7 @@ public class Queen extends Piece{
         this.rank = rank;
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
+        this.value = 9;
     }
 
     // doesn't account for checks

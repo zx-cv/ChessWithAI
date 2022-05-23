@@ -16,6 +16,8 @@ public class Board {
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
   private Square ghostPawn = null;
+  private static ArrayList<Piece> whiteCaptured = new ArrayList<>();
+  private static ArrayList<Piece> blackCaptured = new ArrayList<>();
 
   public Board(boolean isWhite) {
     setWhite(isWhite);
@@ -147,18 +149,18 @@ public class Board {
     if (promoteClick) {
 
       Piece p = null;
-      switch ((r - lastClickedR)) {
+      switch (Math.abs(r - lastClickedR)) {
         case 0:
-          p = new Queen(isWhite, r, c - 1);
+          p = moveWhite?new Queen(moveWhite, r, c - 1):new Knight(moveWhite, r, c - 1);
           break;
         case 1:
-          p = new Rook(isWhite, r, c - 1);
+          p = moveWhite?new Rook(moveWhite, r, c - 1):new Bishop(moveWhite, r, c - 1);
           break;
         case 2:
-          p = new Bishop(isWhite, r, c - 1);
+          p = moveWhite?new Bishop(moveWhite, r, c - 1):new Rook(moveWhite, r, c - 1);
           break;
         case 3:
-          p = new Knight(isWhite, r, c - 1);
+          p = moveWhite?new Knight(moveWhite, r, c - 1):new Queen(moveWhite, r, c - 1);
           break;
       }
       if (moveWhite) {
@@ -258,6 +260,7 @@ public class Board {
     Piece p = null;
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
+      boolean temp = moveWhite?blackCaptured.add(p):whiteCaptured.add(p);
       grid[r][c].capture();
     }
 
@@ -358,8 +361,25 @@ public class Board {
       GameFrame.wtime.setVisible(false);
       GameFrame.btime.setVisible(true);
     }
-  }
 
+    Collections.sort(whiteCaptured, new comp());
+    for (int i = 0; i < whiteCaptured.size(); i++) {
+      whiteCaptured.get(i).drawCaptured(g, 35, 75+i*20);
+      
+    }
+    Collections.sort(blackCaptured, new comp());
+    for (int i = 0; i < blackCaptured.size(); i++) {
+      blackCaptured.get(i).drawCaptured(g, 535, 75+i*20);
+    }
+
+  }
+  static class comp implements Comparator <Piece> { 
+    public int compare(Piece p1, Piece p2) {
+      if (p1.getValue()>p2.getValue()) 
+        return -1;
+      return 1;
+    }
+  }
   public boolean blackInCheck() {
     Square kSq = grid[bKing.getRank()][bKing.getFile()];
     for (Piece p : whitePieces) {
@@ -426,7 +446,7 @@ public class Board {
     Piece p = null;
     boolean ans = true;
     if (grid[toR][toC].hasPiece()) {
-      p = grid[toR][toC].getPiece();
+      p = grid[toR][toC].getPiece(); 
       grid[toR][toC].capture();
     }
 
