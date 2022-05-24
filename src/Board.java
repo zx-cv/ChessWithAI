@@ -10,7 +10,7 @@ public class Board {
   private static ArrayList<Piece> blackPieces = new ArrayList<>();
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
-  private static boolean isWhite;
+  private static boolean isWhite = true;
   public static boolean moveWhite = true;
   private boolean promoteClick = false;
   private King bKing, wKing;
@@ -20,8 +20,8 @@ public class Board {
   private static ArrayList<Piece> blackCaptured = new ArrayList<>();
   private int afterGPawn;
 
-  public Board(boolean isWhite) {
-    setWhite(isWhite);
+  public Board() {
+    //setWhite(isWhite);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if ((i % 2 + j % 2) % 2 == 0) {
@@ -31,7 +31,8 @@ public class Board {
         }
       }
     }
-    generatePieces(isWhite);
+    //generatePieces(isWhite);
+    
   }
 
   public boolean whiteMove() {
@@ -56,7 +57,7 @@ public class Board {
 
   // initializes and place pieces on the board
   // isWhite == true will make white on bottom and vice versa
-  private void generatePieces(boolean isWhite) {
+  public void generatePieces(boolean isWhite) {
     // Pawns
     for (int i = 0; i < 8; i++) {
       grid[1][i].placePiece(new Pawn(!isWhite, 1, i));
@@ -128,6 +129,10 @@ public class Board {
 
   public static void setWhite(boolean b) {
     isWhite = b;
+  }
+
+  public void startClicked(MouseEvent me) {
+    
   }
 
   public void justClicked(MouseEvent me) {
@@ -248,6 +253,7 @@ public class Board {
     //is the gPawn isn't null and a pawn is trying to move to the gPawn square, take the pawn connected to it
     else if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
       int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
+      addCapturedPiece(grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].getPiece());
       grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].capture();
       ghostPawn.capture();
       ghostPawn = null;
@@ -262,7 +268,7 @@ public class Board {
     Piece p = null;
     if (grid[r][c].hasPiece()) {
       p = grid[r][c].getPiece();
-      boolean temp = moveWhite?blackCaptured.add(p):whiteCaptured.add(p);
+      addCapturedPiece(p);
       grid[r][c].capture();
     }
 
@@ -334,6 +340,11 @@ public class Board {
 
   public boolean inBounds(int toR, int toC) {
     return toR >= 0 && toR < grid.length && toC >= 0 && toC < grid[0].length;
+  }
+
+  public void addCapturedPiece(Piece p) {
+    if (p.isWhite) whiteCaptured.add(p);
+    else blackCaptured.add(p);
   }
 
   public void draw(Graphics g) {

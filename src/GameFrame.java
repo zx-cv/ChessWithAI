@@ -15,12 +15,13 @@ import javax.swing.*;
 public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
-	public static Board board = new Board(true); // i chose a random color but maybe we could make it user input?
-	public static double startTime = 1.0 * System.currentTimeMillis();
+	public static Board board = new Board(); // i chose a random color but maybe we could make it user input?
+	public static double startTime;
 	public static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
 	public static JLabel wtime, btime;
 	public static long wCurr = 10, bCurr = 600;
 	public static JLabel pawnPromotion;
+	public static JLabel start = new JLabel();
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
@@ -73,7 +74,27 @@ public class GameFrame extends JFrame {
 		pawnPromotion = new JLabel();
 		pawnPromotion.setLayout(new BoxLayout(pawnPromotion, BoxLayout.Y_AXIS));
 		panel.add(pawnPromotion);
+		
+		start.setBounds(0, 0, this.WIDTH, this.HEIGHT);
 
+		panel.add(start);
+		JButton beginButton = new JButton("START");
+		beginButton.setBounds(5*Square.getSide(), 3*Square.getSide(), 2*Square.getSide(), Square.getSide());
+		start.add(beginButton);
+		JLabel title = new JLabel("CHESS", SwingConstants.CENTER);
+		title.setBackground(Color.WHITE); title.setOpaque(true);
+		title.setBounds(4*Square.getSide(), 2*Square.getSide(), 4*Square.getSide(), Square.getSide());
+		start.add(title);
+		JLabel chooseColor = new JLabel("CHOOSE A SIDE:", SwingConstants.CENTER);
+		chooseColor.setBackground(Color.WHITE); chooseColor.setOpaque(true);
+		chooseColor.setBounds(3*Square.getSide(), 4*Square.getSide(), 3*Square.getSide(), Square.getSide());
+		start.add(chooseColor);
+		JButton blackButton = new JButton("BLACK");
+		blackButton.setBounds(6*Square.getSide(), 4*Square.getSide(), Square.getSide(), Square.getSide());
+		start.add(blackButton);
+		JButton whiteButton = new JButton("WHITE");
+		whiteButton.setBounds(7*Square.getSide(), 4*Square.getSide(), Square.getSide(), Square.getSide());
+		start.add(whiteButton);
 
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -89,10 +110,45 @@ public class GameFrame extends JFrame {
 					gameOver();
 					return;
 				}
-				game.updateGame();
-				panel.repaint();
-				wtime.setText(getTime());
-				btime.setText(getTime());
+				if (Game.gameStarted) {
+					start.setVisible(false);
+					wtime.setVisible(true);
+					btime.setVisible(true);
+					black.setVisible(true);
+					white.setVisible(true);
+					game.updateGame();
+					panel.repaint();
+					wtime.setText(getTime());
+					btime.setText(getTime());
+				} else {
+					if (beginButton.getModel().isPressed()) {
+						Game.gameStarted = true;
+						board.generatePieces(Board.isWhite());
+						startTime = 1.0 * System.currentTimeMillis();
+						return;
+					}
+					if (blackButton.getModel().isPressed()) {
+						whiteButton.setBackground(Color.WHITE);
+						blackButton.setBackground(Color.YELLOW);
+						Board.setWhite(false);
+						return;
+					} else if (whiteButton.getModel().isPressed()) {
+						blackButton.setBackground(Color.WHITE);
+						whiteButton.setBackground(Color.YELLOW);
+						Board.setWhite(true);
+						return;
+					}
+					
+					start.setVisible(true);
+					start.setBackground(Color.WHITE);
+        			start.setOpaque(true);
+					wtime.setVisible(false);
+					btime.setVisible(false);
+					black.setVisible(false);
+					white.setVisible(false);
+					panel.repaint();
+				}
+				
 			}
 		});
 		
@@ -104,7 +160,8 @@ public class GameFrame extends JFrame {
 
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
-		board.justClicked(me);
+		if (Game.gameStarted) board.justClicked(me);
+		else board.startClicked(me);
 		panel.repaint();
 	}
 
@@ -142,10 +199,10 @@ public class GameFrame extends JFrame {
 		String s = "";
 		double t;
 		if (board.whiteMove()) {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - blackTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
 			whiteTimeLeft = t;
 		} else {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
 		if (t == 0) Game.gameOver = true;

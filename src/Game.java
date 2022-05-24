@@ -9,6 +9,7 @@ import javax.swing.*;
 public class Game {
 	
 	public static boolean gameOver = false;
+	public static boolean gameStarted = false;
     public Game(){
         
     }
