@@ -83,25 +83,25 @@ public class Board {
 
     // King and Queen
     if (isWhite) {
-      grid[0][3].placePiece(new Queen(!isWhite, 0, 3));
+      grid[0][3].placePiece(new Queen(false, 0, 3));
 
-      bKing = new King(!isWhite, 0, 4);
+      bKing = new King(false, 0, 4);
       grid[0][4].placePiece(bKing);
 
-      grid[7][3].placePiece(new Queen(isWhite, 7, 3));
+      grid[7][3].placePiece(new Queen(true, 7, 3));
 
-      wKing = new King(isWhite, 7, 4);
+      wKing = new King(true, 7, 4);
       grid[7][4].placePiece(wKing);
     } else {
-      bKing = new King(!isWhite, 0, 3);
-      grid[0][3].placePiece(bKing);
+      wKing = new King(true, 0, 3);
+      grid[0][3].placePiece(wKing);
 
-      grid[0][4].placePiece(new Queen(!isWhite, 0, 4));
+      grid[0][4].placePiece(new Queen(true, 0, 4));
 
-      wKing = new King(isWhite, 7, 3);
-      grid[7][3].placePiece(wKing);
+      bKing = new King(false, 7, 3);
+      grid[7][3].placePiece(bKing);
 
-      grid[7][4].placePiece(new Queen(isWhite, 7, 4));
+      grid[7][4].placePiece(new Queen(false, 7, 4));
     }
 
     // adding each piece to blackPieces/whitePieces
@@ -273,6 +273,7 @@ public class Board {
     // if the side that just moved is still in check, undo the move
     if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
       grid[lastClickedR][lastClickedC].placePiece(movingPiece);
+      grid[r][c].removePiece();
       if (p != null) {
         grid[r][c].placePiece(p);
         if (p instanceof Rook) {
@@ -287,6 +288,12 @@ public class Board {
         }
       }
       secondClick = false;
+      if (movingPiece instanceof Rook) {
+        ((Rook) movingPiece).subtractMove();
+      } else if (movingPiece instanceof King) {
+        ((King) movingPiece).subtractMove();
+      }
+      return;
     }
     
     if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
@@ -296,19 +303,7 @@ public class Board {
       
       return;
     }
-    if (movingPiece instanceof Rook) {
-      ((Rook) movingPiece).subtractMove();
-      return;
-    } else if (movingPiece instanceof King) {
-      ((King) movingPiece).subtractMove();
-      return;
-    }
-
-    if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
-      promoteClick = true;
-      lastClickedC = c;
-      lastClickedR = r;
-    }
+    
 
     lastClickedC = -1;
     lastClickedR = -1;
@@ -458,6 +453,12 @@ public class Board {
     grid[toR][toC].placePiece(movingPiece);
     grid[fromR][fromC].removePiece();
 
+    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
+      ans = false;
+    }
+
+    grid[fromR][fromC].placePiece(movingPiece);
+    grid[toR][toC].removePiece();
     if (movingPiece instanceof Rook) {
       ((Rook) movingPiece).subtractMove();
       ((Rook) movingPiece).subtractMove();
@@ -466,12 +467,6 @@ public class Board {
       ((King) movingPiece).subtractMove();
     }
 
-    if ((moveWhite && whiteInCheck()) || (!moveWhite && blackInCheck())) {
-      ans = false;
-    }
-
-    grid[fromR][fromC].placePiece(movingPiece);
-    grid[toR][toC].removePiece();
     if (p != null) {
       grid[toR][toC].placePiece(p);
       if (p.isWhite()) {
