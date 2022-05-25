@@ -14,6 +14,7 @@ import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.border.LineBorder;
+import java.io.*;
 
 public class GameFrame extends JFrame {
 	private int prints = 0;
@@ -96,7 +97,7 @@ public class GameFrame extends JFrame {
 		
 		start.setForeground(new Color(101, 67, 33)); 
 		JButton beginButton = new JButton("START");
-		beginButton.setBounds(5*Square.getSide(), 3*Square.getSide(), 2*Square.getSide(), Square.getSide());
+		beginButton.setBounds(5*Square.getSide(), (int)(3.25*Square.getSide()), 2*Square.getSide(), Square.getSide());
 		beginButton.setForeground(new Color(31, 14, 10)); 
 		beginButton.setFont(new Font("Courier", Font.PLAIN, 20));
 		start.add(beginButton);
@@ -145,10 +146,7 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (getTime().equals("00:00") || Game.isGameOver()) {
-					gameOver();
-					return;
-				}
+				
 				if (Game.isGameStarted()) {
 					start.setVisible(false);
 					wtime.setVisible(true);
@@ -159,6 +157,10 @@ public class GameFrame extends JFrame {
 					panel.repaint();
 					wtime.setText(getTime());
 					btime.setText(getTime());
+					if (getTime().equals("00:00") || Game.isGameOver()) {
+						gameOver();
+						return;
+					}
 				} else {
 					if (beginButton.getModel().isPressed()) {
 						Game.setGameStarted(true);
@@ -204,7 +206,6 @@ public class GameFrame extends JFrame {
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
 		if (Game.isGameStarted()) board.justClicked(me);
-		else board.startClicked(me);
 		panel.repaint();
 	}
 
@@ -242,10 +243,12 @@ public class GameFrame extends JFrame {
 		String s = "";
 		double t;
 		if (board.whiteMove()) {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			//t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
 			whiteTimeLeft = t;
 		} else {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
+			//t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
+			t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
 		if (t == 0) Game.setGameOver(true);
@@ -261,11 +264,40 @@ public class GameFrame extends JFrame {
 
 	public void gameOver() {
 		Object[] options = {"EXIT", "RESTART"};
-		
-		
-		
-		this.setVisible(false);
-		System.exit(0);
+		// JOptionPane optionPane = ;
+		// JDialog dialog = new JDialog(this, "Click a button", true);
+		// dialog.setContentPane(optionPane);
+		// dialog.setDefaultCloseOperation(
+		// JDialog.DO_NOTHING_ON_CLOSE);
+		// dialog.addWindowListener(new WindowAdapter() {
+		// public void windowClosing(WindowEvent we) {
+		// 	setLabel("Thwarted user attempt to close window.");
+		// }});
+		// optionPane.addPropertyChangeListener( new PropertyChangeListener() {
+		// 	public void propertyChange(PropertyChangeEvent e) {
+		// 	String prop = e.getPropertyName();
+
+		// 	if (dialog.isVisible() && (e.getSource() == optionPane) && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+
+		// 	dialog.setVisible(false);
+		// }
+		// }});
+		// dialog.pack();
+		// dialog.setVisible(true);
+		int n = JOptionPane.showOptionDialog(this, "Would you like to exit or begin a new game?", "GAME OVER", JOptionPane.YES_NO_OPTION,
+    		JOptionPane.QUESTION_MESSAGE, null, options, options[0]); //default button title
+		if (n == 0) { //exit
+			this.setVisible(false);
+			System.exit(0);
+		} else {
+			Game.setGameOver(false);
+			Game.setGameStarted(false);
+			board = new Board();
+			game = new Game();
+			start.setVisible(true);
+			start.setBackground(new Color(210, 180, 140));
+        	start.setOpaque(true);
+		}
 	}
 
 }

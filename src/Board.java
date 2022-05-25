@@ -131,10 +131,6 @@ public class Board {
     isWhite = b;
   }
 
-  public void startClicked(MouseEvent me) {
-    
-  }
-
   public void justClicked(MouseEvent me) {
     int r = (me.getY() - Square.getSide()/2) / Square.getSide();
     int c = (me.getX() - 2*Square.getSide()) / Square.getSide();
