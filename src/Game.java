@@ -44,9 +44,6 @@ public class Game {
 	 * Right now I am checking for collisions between GameObjects
 	 */
 	public void checkGameOver() {
-		if (gameOver) {
-			System.exit(0);
-		}
 		
 	}
 
