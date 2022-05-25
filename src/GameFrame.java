@@ -26,10 +26,11 @@ public class GameFrame extends JFrame {
 	//private static long wCurr = 10, bCurr = 600;
 	private static JLabel pawnPromotion;
 	private static JLabel start = new JLabel();
+	private static JMenuBar mb;
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
-	private static final int WIDTH = 12*Square.getSide(), HEIGHT = 9*Square.getSide(), REFRESH = 40;
+	private static final int WIDTH = 12*Square.getSide(), HEIGHT = (int)(9.5*Square.getSide()), REFRESH = 40;
 
 	// where the game objects are displayed
 	private JPanel panel = new JPanel() {
@@ -76,6 +77,8 @@ public class GameFrame extends JFrame {
 		this.add(panel);
 		this.pack();
 		panel.setLayout(null);
+
+		//in game graphics
 		wtime = new JLabel(getTime());
 		wtime.setBounds(524, 25, 50, 25);
 		panel.add(wtime);
@@ -92,6 +95,7 @@ public class GameFrame extends JFrame {
 		pawnPromotion.setLayout(new BoxLayout(pawnPromotion, BoxLayout.Y_AXIS));
 		panel.add(pawnPromotion);
 		
+		//starting panel
 		start.setBounds(0, 0, this.WIDTH, this.HEIGHT);
 		panel.add(start);
 		
@@ -136,6 +140,49 @@ public class GameFrame extends JFrame {
 		whiteButton.setFont(new Font("Courier", Font.PLAIN, 20));
 		start.add(whiteButton);
 
+		//menu
+		mb = new JMenuBar();
+		JMenu inGameMenu = new JMenu("MENU");
+		JMenuItem quit = new JMenuItem("QUIT");
+		quit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				quit();
+			}
+		});
+		JMenuItem restart = new JMenuItem("RESTART");
+		restart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				restart();
+			}
+		});
+		JMenu togglePossibleMoves = new JMenu("POSSIBLE MOVES");
+		JMenuItem showMoves = new JMenuItem("SHOW");
+		JMenuItem hideMoves = new JMenuItem("HIDE");
+		hideMoves.setBackground(Color.YELLOW);
+		showMoves.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Board.setShowMoves(true);
+				showMoves.setBackground(Color.YELLOW);
+				hideMoves.setBackground(Color.WHITE);
+			}
+		});
+		hideMoves.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Board.setShowMoves(false);
+				showMoves.setBackground(Color.WHITE);
+				hideMoves.setBackground(Color.YELLOW);
+			}
+		});
+		togglePossibleMoves.add(showMoves); togglePossibleMoves.add(hideMoves);
+		inGameMenu.add(quit); inGameMenu.add(restart); inGameMenu.add(togglePossibleMoves);
+		mb.add(inGameMenu);
+		setJMenuBar(mb);
+		mb.setVisible(false);
+
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
@@ -146,7 +193,6 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
 				if (Game.isGameStarted()) {
 					start.setVisible(false);
 					wtime.setVisible(true);
@@ -157,6 +203,7 @@ public class GameFrame extends JFrame {
 					panel.repaint();
 					wtime.setText(getTime());
 					btime.setText(getTime());
+					mb.setVisible(true);
 					if (getTime().equals("00:00") || Game.isGameOver()) {
 						gameOver();
 						return;
@@ -243,12 +290,12 @@ public class GameFrame extends JFrame {
 		String s = "";
 		double t;
 		if (board.whiteMove()) {
-			//t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
-			t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
+			//t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
 			whiteTimeLeft = t;
 		} else {
-			//t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
-			t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
+			//t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
 		if (t == 0) Game.setGameOver(true);
@@ -287,17 +334,24 @@ public class GameFrame extends JFrame {
 		int n = JOptionPane.showOptionDialog(this, "Would you like to exit or begin a new game?", "GAME OVER", JOptionPane.YES_NO_OPTION,
     		JOptionPane.QUESTION_MESSAGE, null, options, options[0]); //default button title
 		if (n == 0) { //exit
-			this.setVisible(false);
-			System.exit(0);
+			quit();
 		} else {
-			Game.setGameOver(false);
-			Game.setGameStarted(false);
-			board = new Board();
-			game = new Game();
-			start.setVisible(true);
-			start.setBackground(new Color(210, 180, 140));
-        	start.setOpaque(true);
+			restart();
 		}
 	}
 
+	public void quit() {
+		this.setVisible(false);
+		System.exit(0);
+	}
+	public void restart() {
+		Game.setGameOver(false);
+		Game.setGameStarted(false);
+		board = new Board();
+		game = new Game();
+		start.setVisible(true);
+		start.setBackground(new Color(210, 180, 140));
+    	start.setOpaque(true);
+		mb.setVisible(false);
+	}
 }

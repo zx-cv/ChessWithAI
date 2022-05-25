@@ -30,6 +30,10 @@ public class Square{
     return file;
   }
 
+  public boolean getIsWhite() {
+    return isWhite;
+  }
+
   public void placePiece(Piece p){
     p.moveTo(rank, file);
     piece = p;
@@ -59,7 +63,7 @@ public class Square{
   public void draw(Graphics g) {
     if (isWhite) g.setColor(new Color(210, 180, 140));
     else g.setColor(new Color(101, 67, 33));
-    g.fillRect(rank*side+2*side, file*side+side/2, side, side);
+    g.fillRect(file*side+2*side, rank*side+side/2, side, side);
     
   }
 

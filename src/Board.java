@@ -19,6 +19,7 @@ public class Board {
   private static ArrayList<Piece> whiteCaptured = new ArrayList<>();
   private static ArrayList<Piece> blackCaptured = new ArrayList<>();
   private int afterGPawn;
+  private static boolean showPossibleMoves;
 
   public Board() {
     //setWhite(isWhite);
@@ -53,6 +54,14 @@ public class Board {
 
   public static ArrayList<Piece> getBlackPieces() {
     return blackPieces;
+  }
+
+  public static void setShowMoves(boolean b) {
+    showPossibleMoves = b;
+  }
+
+  public static boolean getShowMoves() {
+    return showPossibleMoves;
   }
 
   // initializes and place pieces on the board
@@ -381,6 +390,20 @@ public class Board {
     Collections.sort(blackCaptured, new comp());
     for (int i = 0; i < blackCaptured.size(); i++) {
       blackCaptured.get(i).drawCaptured(g, 535, 75+i*20);
+    }
+
+    if (secondClick && showPossibleMoves) {
+      ArrayList<Square> moves = grid[lastClickedR][lastClickedC].getPiece().getLegalMoves(this);
+      for (int r = 0; r < grid.length; r++) {
+        for (int c = 0; c < grid[0].length; c++) {
+          if (moves.contains(grid[r][c])) {
+            g.setColor(new Color(255, 255, 0, 75));
+          } else {
+            g.setColor(grid[r][c].getIsWhite()?new Color(210, 180, 140):new Color(101, 67, 33));
+          }
+          g.fillRect(grid[r][c].getFile()*Square.getSide() + 2*Square.getSide(), grid[r][c].getRank()*Square.getSide() + Square.getSide()/2, Square.getSide(), Square.getSide());
+        }
+      }
     }
 
   }
