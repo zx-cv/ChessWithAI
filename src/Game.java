@@ -8,11 +8,24 @@ import javax.swing.*;
 
 public class Game {
 	
-	public static boolean gameOver = false;
-	public static boolean gameStarted = false;
+	private static boolean gameOver = false;
+	private static boolean gameStarted = false;
     public Game(){
         
     }
+
+	public static boolean isGameOver() {
+		return gameOver;
+	}
+	public static void setGameOver(boolean b) {
+		gameOver = b;
+	}
+	public static boolean isGameStarted() {
+		return gameStarted;
+	}
+	public static void setGameStarted(boolean b) {
+		gameStarted = b;
+	}
 
 	/**
 	 * This is called every time the Timer goes off.  Right now, it moves all 
@@ -52,11 +65,11 @@ public class Game {
 	 * @param g
 	 */
     public void drawTheGame(Graphics g) {
-		GameFrame.board.draw(g);
-		for (Piece p: GameFrame.board.getWhitePieces()) {
+		GameFrame.getBoard().draw(g);
+		for (Piece p: GameFrame.getBoard().getWhitePieces()) {
 			p.draw(g);
 		}
-		for (Piece p: GameFrame.board.getBlackPieces()) {
+		for (Piece p: GameFrame.getBoard().getBlackPieces()) {
 			p.draw(g);
 		}
 		

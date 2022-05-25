@@ -2,7 +2,7 @@ package src;
 import java.util.*;
 
 public class Bishop extends Piece{
-  static int x=180, w = 90, h=90;
+  private static int x=180, w = 90, h=90;
   private int y = 0;
   
   public Bishop(boolean isWhite, int rank, int file){
@@ -14,6 +14,9 @@ public class Bishop extends Piece{
     this.value = 3;
   }
 
+  public static int getX() {
+    return x;
+  }
   
   //doesn't account for checks
   public ArrayList<Square> getLegalMoves(Board b){

@@ -2,7 +2,7 @@ package src;
 import java.util.*;
 
 public class King extends Piece{
-  static int x=0, w = 90, h=90;
+  private static int x=0, w = 90, h=90;
   private int y = 0;
   private int moves = 0; //if moves is > 1 then it has moved
   private static boolean whiteKingCheck;

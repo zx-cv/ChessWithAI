@@ -11,7 +11,7 @@ public class Board {
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
   private static boolean isWhite = true;
-  public static boolean moveWhite = true;
+  private static boolean moveWhite = true;
   private boolean promoteClick = false;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
@@ -181,8 +181,8 @@ public class Board {
       promoteClick = !promoteClick;
       secondClick = !secondClick;
       moveWhite = !moveWhite;
-      GameFrame.pawnPromotion.setVisible(false);
-      GameFrame.pawnPromotion.repaint();
+      GameFrame.getPawnPromotion().setVisible(false);
+      GameFrame.getPawnPromotion().repaint();
       return;
     }
     grid[lastClickedR][lastClickedC].getPiece().select(false);
@@ -324,10 +324,10 @@ public class Board {
     if (blackInCheck() || whiteInCheck()) {
       if (whiteCheckMated()) {
         System.out.println("White Checkmated");
-        Game.gameOver = true;
+        Game.setGameOver(true);
       } else if (blackCheckMated()) {
         System.out.println("Black Checkmated");
-        Game.gameOver = true;
+        Game.setGameOver(true);
       } else {
         System.out.println("CHECK");
       }
@@ -335,7 +335,7 @@ public class Board {
 
     else if ((moveWhite && whiteCheckMated()) || (!moveWhite && blackCheckMated())) {
       System.out.println("Stalemate");
-      Game.gameOver = true;
+      Game.setGameOver(true);
     }
 
     afterGPawn++;
@@ -370,11 +370,11 @@ public class Board {
     
     g.setColor(Color.WHITE);
     if (moveWhite) {
-      GameFrame.btime.setVisible(false);
-      GameFrame.wtime.setVisible(true);
+      GameFrame.getBTime().setVisible(false);
+      GameFrame.getWTime().setVisible(true);
     } else {
-      GameFrame.wtime.setVisible(false);
-      GameFrame.btime.setVisible(true);
+      GameFrame.getWTime().setVisible(false);
+      GameFrame.getBTime().setVisible(true);
     }
 
     Collections.sort(whiteCaptured, new comp());

@@ -1,6 +1,7 @@
 package src;
 
 import java.awt.Color;
+import java.awt.*;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -9,23 +10,25 @@ import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
-
+import javax.sound.sampled.Line;
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.border.LineBorder;
 
 public class GameFrame extends JFrame {
 	private int prints = 0;
 	private Game game = new Game();
-	public static Board board = new Board(); // i chose a random color but maybe we could make it user input?
-	public static double startTime;
-	public static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
-	public static JLabel wtime, btime;
-	public static long wCurr = 10, bCurr = 600;
-	public static JLabel pawnPromotion;
-	public static JLabel start = new JLabel();
+	private static Board board = new Board(); // i chose a random color but maybe we could make it user input?
+	private static double startTime;
+	private static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
+	private static JLabel wtime, btime;
+	//private static long wCurr = 10, bCurr = 600;
+	private static JLabel pawnPromotion;
+	private static JLabel start = new JLabel();
 
 	// starting dimensions of window (pixels)
 	//public static final int WIDTH = 8*Square.getSide(), HEIGHT = 8*Square.getSide(), REFRESH = 40;
-	public static final int WIDTH = 12*Square.getSide(), HEIGHT = 9*Square.getSide(), REFRESH = 40;
+	private static final int WIDTH = 12*Square.getSide(), HEIGHT = 9*Square.getSide(), REFRESH = 40;
 
 	// where the game objects are displayed
 	private JPanel panel = new JPanel() {
@@ -45,6 +48,19 @@ public class GameFrame extends JFrame {
 		super(string);
 		//pm = new PawnMenu(string);
 		setUpStuff();
+	}
+
+	public static JLabel getPawnPromotion() {
+		return pawnPromotion;
+	}
+	public static Board getBoard() {
+		return board;
+	}
+	public static JLabel getWTime() {
+		return wtime;
+	}
+	public static JLabel getBTime() {
+		return btime;
 	}
 
 	/**
@@ -76,24 +92,47 @@ public class GameFrame extends JFrame {
 		panel.add(pawnPromotion);
 		
 		start.setBounds(0, 0, this.WIDTH, this.HEIGHT);
-
 		panel.add(start);
+		
+		start.setForeground(new Color(101, 67, 33)); 
 		JButton beginButton = new JButton("START");
 		beginButton.setBounds(5*Square.getSide(), 3*Square.getSide(), 2*Square.getSide(), Square.getSide());
+		beginButton.setForeground(new Color(31, 14, 10)); 
+		beginButton.setFont(new Font("Courier", Font.PLAIN, 20));
 		start.add(beginButton);
+
 		JLabel title = new JLabel("CHESS", SwingConstants.CENTER);
-		title.setBackground(Color.WHITE); title.setOpaque(true);
+		title.setBackground(new Color(210, 180, 140)); 
+		title.setForeground(new Color(31, 14, 10)); 
+		title.setOpaque(true);
 		title.setBounds(4*Square.getSide(), 2*Square.getSide(), 4*Square.getSide(), Square.getSide());
+		title.setFont(new Font("Courier", Font.PLAIN, 50));
 		start.add(title);
+
 		JLabel chooseColor = new JLabel("CHOOSE A SIDE:", SwingConstants.CENTER);
-		chooseColor.setBackground(Color.WHITE); chooseColor.setOpaque(true);
-		chooseColor.setBounds(3*Square.getSide(), 4*Square.getSide(), 3*Square.getSide(), Square.getSide());
+		chooseColor.setBackground(new Color(210, 180, 140)); 
+		chooseColor.setForeground(new Color(101, 67, 33)); 
+		chooseColor.setOpaque(true);
+		chooseColor.setBounds((int)(2.5*Square.getSide()), (int)(4.5*Square.getSide()), 3*Square.getSide(), Square.getSide());
+		chooseColor.setFont(new Font("Courier", Font.PLAIN, 17));
 		start.add(chooseColor);
+
 		JButton blackButton = new JButton("BLACK");
-		blackButton.setBounds(6*Square.getSide(), 4*Square.getSide(), Square.getSide(), Square.getSide());
+		blackButton.setBounds(6*Square.getSide(), (int)(4.5*Square.getSide()), 2*Square.getSide(), Square.getSide());
+		blackButton.setForeground(new Color(101, 67, 33)); 
+		blackButton.setBackground(new Color(210, 180, 140));
+		//blackButton.setBorderPainted(false); 
+		blackButton.setOpaque(true);
+		blackButton.setFont(new Font("Courier", Font.PLAIN, 20));
 		start.add(blackButton);
+		
 		JButton whiteButton = new JButton("WHITE");
-		whiteButton.setBounds(7*Square.getSide(), 4*Square.getSide(), Square.getSide(), Square.getSide());
+		whiteButton.setBounds((int)(8.25*Square.getSide()), (int)(4.5*Square.getSide()), 2*Square.getSide(), Square.getSide());
+		whiteButton.setForeground(new Color(101, 67, 33)); 
+		whiteButton.setBackground(new Color(210, 180, 140));
+		//whiteButton.setBorderPainted(false);
+		whiteButton.setOpaque(true);
+		whiteButton.setFont(new Font("Courier", Font.PLAIN, 20));
 		start.add(whiteButton);
 
 		panel.addMouseListener(new MouseAdapter() {
@@ -106,11 +145,11 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (getTime().equals("00:00") || Game.gameOver) {
+				if (getTime().equals("00:00") || Game.isGameOver()) {
 					gameOver();
 					return;
 				}
-				if (Game.gameStarted) {
+				if (Game.isGameStarted()) {
 					start.setVisible(false);
 					wtime.setVisible(true);
 					btime.setVisible(true);
@@ -122,25 +161,29 @@ public class GameFrame extends JFrame {
 					btime.setText(getTime());
 				} else {
 					if (beginButton.getModel().isPressed()) {
-						Game.gameStarted = true;
+						Game.setGameStarted(true);
 						board.generatePieces(Board.isWhite());
 						startTime = 1.0 * System.currentTimeMillis();
 						return;
 					}
 					if (blackButton.getModel().isPressed()) {
-						whiteButton.setBackground(Color.WHITE);
+						//System.out.println("black button is pressed");
+						whiteButton.setBackground(new Color(210, 180, 140));
 						blackButton.setBackground(Color.YELLOW);
 						Board.setWhite(false);
+						panel.repaint();
 						return;
 					} else if (whiteButton.getModel().isPressed()) {
-						blackButton.setBackground(Color.WHITE);
+						//System.out.println("white button is pressed");
+						blackButton.setBackground(new Color(210, 180, 140));
 						whiteButton.setBackground(Color.YELLOW);
 						Board.setWhite(true);
+						panel.repaint();
 						return;
 					}
 					
 					start.setVisible(true);
-					start.setBackground(Color.WHITE);
+					start.setBackground(new Color(210, 180, 140));
         			start.setOpaque(true);
 					wtime.setVisible(false);
 					btime.setVisible(false);
@@ -160,7 +203,7 @@ public class GameFrame extends JFrame {
 
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
-		if (Game.gameStarted) board.justClicked(me);
+		if (Game.isGameStarted()) board.justClicked(me);
 		else board.startClicked(me);
 		panel.repaint();
 	}
@@ -202,10 +245,10 @@ public class GameFrame extends JFrame {
 			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - blackTimeLeft;
 			whiteTimeLeft = t;
 		} else {
-			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 1) - whiteTimeLeft;
+			t = 1200 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
-		if (t == 0) Game.gameOver = true;
+		if (t == 0) Game.setGameOver(true);
 		int i = (int)t / 60;
 		if (i < 10) s += "0";
 		s +=  i + ":";
@@ -217,8 +260,12 @@ public class GameFrame extends JFrame {
 	}
 
 	public void gameOver() {
+		Object[] options = {"EXIT", "RESTART"};
+		
+		
+		
 		this.setVisible(false);
-
+		System.exit(0);
 	}
 
 }

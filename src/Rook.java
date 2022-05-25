@@ -3,7 +3,7 @@ package src;
 import java.util.*;
 
 public class Rook extends Piece{
-    static int x=360, w = 90, h=90;
+    private static int x=360, w = 90, h=90;
     private int y = 0;
     private int moves = 0;
     public Rook(boolean isWhite, int rank, int file){
@@ -13,6 +13,10 @@ public class Rook extends Piece{
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
         this.value = 5;
+    }
+
+    public static int getX() {
+        return x;
     }
 
     // doesn't account for checks

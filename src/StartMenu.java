@@ -103,7 +103,7 @@ public class StartMenu extends JFrame{
 
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
-		gf.board.justClicked(me);
+		GameFrame.getBoard().justClicked(me);
 		panel.repaint();
 	}
 }

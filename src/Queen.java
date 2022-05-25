@@ -3,7 +3,7 @@ package src;
 import java.util.*;
 
 public class Queen extends Piece{
-    public static int x=90, w = 90, h=90;
+    private static int x=90, w = 90, h=90;
     private int y = 0;
     public Queen(boolean isWhite, int rank, int file){
         this.isWhite = isWhite;
@@ -12,6 +12,10 @@ public class Queen extends Piece{
         this.file = file;
         this.setImage(openImageFromSpriteSheet(x, y, w, h));
         this.value = 9;
+    }
+
+    public static int getX() {
+        return x;
     }
 
     // doesn't account for checks

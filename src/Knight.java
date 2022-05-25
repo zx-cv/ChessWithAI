@@ -3,7 +3,7 @@ package src;
 import java.util.*;
 
 public class Knight extends Piece {
-  static int x = 270, w = 90, h = 90;
+  private static int x = 270, w = 90, h = 90;
   private int y = 0;
 
   public Knight(boolean isWhite, int rank, int file) {
@@ -14,6 +14,10 @@ public class Knight extends Piece {
     this.file = file;
     this.setImage(openImageFromSpriteSheet(x, y, w, h));
     this.value = 2; //it's technically 3, but this is for sorting purposes
+  }
+
+  public static int getX() {
+    return x;
   }
 
   // doesn't account for checks

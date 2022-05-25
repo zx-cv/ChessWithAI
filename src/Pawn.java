@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class Pawn extends Piece{
-    public static int x=450, w = 90, h=90;
+    private static int x=450, w = 90, h=90;
     private int y = 0;
     private boolean firstMove = true;
     private boolean secondMove = true;
@@ -81,46 +81,46 @@ public class Pawn extends Piece{
     public void draw(Graphics g) {
         super.draw(g);
         if (rank != endrow) {return;}
-        GameFrame.pawnPromotion.setVisible(true);
-        GameFrame.pawnPromotion.setBackground(Color.WHITE);
-        GameFrame.pawnPromotion.setOpaque(true);
+        GameFrame.getPawnPromotion().setVisible(true);
+        GameFrame.getPawnPromotion().setBackground(Color.WHITE);
+        GameFrame.getPawnPromotion().setOpaque(true);
         
         if (isWhite) {
-            GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), y+Square.getSide()/2, Square.getSide(), 4*Square.getSide());
-            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, 0, w, h)); 
+            GameFrame.getPawnPromotion().setBounds(this.file*Square.getSide()+3*Square.getSide(), y+Square.getSide()/2, Square.getSide(), 4*Square.getSide());
+            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.getX(), 0, w, h)); 
             JLabel qlabel = new JLabel();
             qlabel.setIcon(q);
-            GameFrame.pawnPromotion.add(qlabel);
-            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, 0, w, h)); 
+            GameFrame.getPawnPromotion().add(qlabel);
+            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.getX(), 0, w, h)); 
             JLabel rlabel = new JLabel();
             rlabel.setIcon(r);
-            GameFrame.pawnPromotion.add(rlabel);
-            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, 0, w, h)); 
+            GameFrame.getPawnPromotion().add(rlabel);
+            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.getX(), 0, w, h)); 
             JLabel blabel = new JLabel();
             blabel.setIcon(b);
-            GameFrame.pawnPromotion.add(blabel);
-            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, 0, w, h)); 
+            GameFrame.getPawnPromotion().add(blabel);
+            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.getX(), 0, w, h)); 
             JLabel klabel = new JLabel();
             klabel.setIcon(k);
-            GameFrame.pawnPromotion.add(klabel);
+            GameFrame.getPawnPromotion().add(klabel);
         } else {
-            GameFrame.pawnPromotion.setBounds(this.file*Square.getSide()+3*Square.getSide(), this.rank*Square.getSide()-2*Square.getSide()-Square.getSide()/2, Square.getSide(), 4*Square.getSide());
-            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.x, 90, w, h)); 
+            GameFrame.getPawnPromotion().setBounds(this.file*Square.getSide()+3*Square.getSide(), this.rank*Square.getSide()-2*Square.getSide()-Square.getSide()/2, Square.getSide(), 4*Square.getSide());
+            ImageIcon q = new ImageIcon(openImageFromSpriteSheet(Queen.getX(), 90, w, h)); 
             JLabel qlabel = new JLabel();
             qlabel.setIcon(q);
-            GameFrame.pawnPromotion.add(qlabel);
-            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.x, 90, w, h)); 
+            GameFrame.getPawnPromotion().add(qlabel);
+            ImageIcon r = new ImageIcon(openImageFromSpriteSheet(Rook.getX(), 90, w, h)); 
             JLabel rlabel = new JLabel();
             rlabel.setIcon(r);
-            GameFrame.pawnPromotion.add(rlabel);
-            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.x, 90, w, h)); 
+            GameFrame.getPawnPromotion().add(rlabel);
+            ImageIcon b = new ImageIcon(openImageFromSpriteSheet(Bishop.getX(), 90, w, h)); 
             JLabel blabel = new JLabel();
             blabel.setIcon(b);
-            GameFrame.pawnPromotion.add(blabel);
-            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.x, 90, w, h)); 
+            GameFrame.getPawnPromotion().add(blabel);
+            ImageIcon k = new ImageIcon(openImageFromSpriteSheet(Knight.getX(), 90, w, h)); 
             JLabel klabel = new JLabel();
             klabel.setIcon(k);
-            GameFrame.pawnPromotion.add(klabel);
+            GameFrame.getPawnPromotion().add(klabel);
         }
         
        
@@ -129,7 +129,7 @@ public class Pawn extends Piece{
         //g.drawImage(openImageFromSpriteSheet(Bishop.x, iy, w, h), x, y+2*Square.getSide()+Square.getSide()/2, null);
         //g.drawImage(openImageFromSpriteSheet(Knight.x, iy, w, h), x, y+3*Square.getSide()+Square.getSide()/2, null);
         
-        GameFrame.pawnPromotion.repaint();
+        GameFrame.getPawnPromotion().repaint();
     }
     
 }
