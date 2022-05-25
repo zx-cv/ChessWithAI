@@ -15,13 +15,13 @@ public class Board {
   private boolean promoteClick = false;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
-  private Square ghostPawn = null;
+  public static Square ghostPawn = null;
   private static ArrayList<Piece> whiteCaptured = new ArrayList<>();
   private static ArrayList<Piece> blackCaptured = new ArrayList<>();
   private int afterGPawn;
 
   public Board() {
-    //setWhite(isWhite);
+    // setWhite(isWhite);
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
         if ((i % 2 + j % 2) % 2 == 0) {
@@ -31,8 +31,8 @@ public class Board {
         }
       }
     }
-    //generatePieces(isWhite);
-    
+    // generatePieces(isWhite);
+
   }
 
   public boolean whiteMove() {
@@ -132,12 +132,12 @@ public class Board {
   }
 
   public void startClicked(MouseEvent me) {
-    
+
   }
 
   public void justClicked(MouseEvent me) {
-    int r = (me.getY() - Square.getSide()/2) / Square.getSide();
-    int c = (me.getX() - 2*Square.getSide()) / Square.getSide();
+    int r = (me.getY() - Square.getSide() / 2) / Square.getSide();
+    int c = (me.getX() - 2 * Square.getSide()) / Square.getSide();
     if (!secondClick) {
       if (grid[r][c].getPiece() == null) {
         return;
@@ -157,16 +157,16 @@ public class Board {
       Piece p = null;
       switch (Math.abs(r - lastClickedR)) {
         case 0:
-          p = moveWhite?new Queen(moveWhite, r, c - 1):new Knight(moveWhite, r, c - 1);
+          p = moveWhite ? new Queen(moveWhite, r, c - 1) : new Knight(moveWhite, r, c - 1);
           break;
         case 1:
-          p = moveWhite?new Rook(moveWhite, r, c - 1):new Bishop(moveWhite, r, c - 1);
+          p = moveWhite ? new Rook(moveWhite, r, c - 1) : new Bishop(moveWhite, r, c - 1);
           break;
         case 2:
-          p = moveWhite?new Bishop(moveWhite, r, c - 1):new Rook(moveWhite, r, c - 1);
+          p = moveWhite ? new Bishop(moveWhite, r, c - 1) : new Rook(moveWhite, r, c - 1);
           break;
         case 3:
-          p = moveWhite?new Knight(moveWhite, r, c - 1):new Queen(moveWhite, r, c - 1);
+          p = moveWhite ? new Knight(moveWhite, r, c - 1) : new Queen(moveWhite, r, c - 1);
           break;
       }
       if (moveWhite) {
@@ -240,39 +240,30 @@ public class Board {
       return;
     }
     // GameFrame.startTime = System.currentTimeMillis();
-
-    //if the piece moved was a pawn that jumped a square, put a ghost pawn on the jumped square
-    if (grid[lastClickedR][lastClickedC].getPiece().isPawn() && Math.abs(r - lastClickedR) == 2) {
-      if (ghostPawn != null && ghostPawn.hasPiece())
-        ghostPawn.capture();
-      ghostPawn = grid[(r + lastClickedR) / 2][c];
-      ghostPawn.placePiece(new Pawn(moveWhite, (r + lastClickedR) / 2, c));
-      afterGPawn = 0;
-    }
-
-    //is the gPawn isn't null and a pawn is trying to move to the gPawn square, take the pawn connected to it
-    else if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
+    Piece p = null;
+    Piece movingPiece = null;
+    boolean enPassanted = false; // probably not a word but boolean to store if the move was en passant
+    int direction = 0;
+    // is the gPawn isn't null and a pawn is trying to move to the gPawn square,
+    // take the pawn connected to it
+    if (ghostPawn != null && ghostPawn == grid[r][c] && grid[lastClickedR][lastClickedC].getPiece().isPawn()) {
       int dir = (isWhite ^ ghostPawn.getPiece().isWhite()) ? 1 : -1;
       addCapturedPiece(grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].getPiece());
+      movingPiece = grid[lastClickedR][lastClickedC].getPiece();
+      p = grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].getPiece();
       grid[ghostPawn.getRank() + dir][ghostPawn.getFile()].capture();
       ghostPawn.capture();
       ghostPawn = null;
+      enPassanted = true;
+      direction = dir;
+    } else {
+      if (grid[r][c].hasPiece()) {
+        p = grid[r][c].getPiece();
+        addCapturedPiece(p);
+        grid[r][c].capture();
+      }
     }
-
-    // if gPawn square isn't null and a turn has passed without claiming en passant, delete the gPawn
-    if (ghostPawn != null && afterGPawn == 1) {
-      ghostPawn.capture();
-      ghostPawn = null;
-    }
-
-    Piece p = null;
-    if (grid[r][c].hasPiece()) {
-      p = grid[r][c].getPiece();
-      addCapturedPiece(p);
-      grid[r][c].capture();
-    }
-
-    Piece movingPiece = grid[lastClickedR][lastClickedC].getPiece();
+    movingPiece = grid[lastClickedR][lastClickedC].getPiece();
     grid[r][c].placePiece(movingPiece);
     grid[lastClickedR][lastClickedC].removePiece();
 
@@ -281,12 +272,17 @@ public class Board {
       grid[lastClickedR][lastClickedC].placePiece(movingPiece);
       grid[r][c].removePiece();
       if (p != null) {
+        if (enPassanted) {
+          r += direction;
+        }
         grid[r][c].placePiece(p);
         removeCapturedPiece(p);
         if (p instanceof Rook) {
           ((Rook) p).subtractMove();
         } else if (p instanceof King) {
           ((King) p).subtractMove();
+        } else if (p instanceof Pawn) {
+          ((Pawn) p).subtractMove();
         }
         if (p.isWhite()) {
           whitePieces.add(p);
@@ -297,20 +293,41 @@ public class Board {
       secondClick = false;
       if (movingPiece instanceof Rook) {
         ((Rook) movingPiece).subtractMove();
+        ((Rook) movingPiece).subtractMove();
       } else if (movingPiece instanceof King) {
         ((King) movingPiece).subtractMove();
+        ((King) movingPiece).subtractMove();
+      } else if (movingPiece instanceof Pawn) {
+        ((Pawn) movingPiece).subtractMove();
+        ((Pawn) movingPiece).subtractMove();
       }
       return;
     }
-    
+
+    // if the piece moved was a pawn that jumped a square, put a ghost pawn on the
+    // jumped square
+    if (movingPiece.isPawn() && Math.abs(r - lastClickedR) == 2) {
+      if (ghostPawn != null && ghostPawn.hasPiece())
+        ghostPawn.capture();
+      ghostPawn = grid[(r + lastClickedR) / 2][c];
+      ghostPawn.placePiece(new Pawn(moveWhite, (r + lastClickedR) / 2, c));
+      afterGPawn = 0;
+    }
+
+    // if gPawn square isn't null and a turn has passed without claiming en passant,
+    // delete the gPawn
+    if (ghostPawn != null && afterGPawn == 1) {
+      ghostPawn.capture();
+      ghostPawn = null;
+    }
+
     if (grid[r][c].getPiece().isPawn() && r == ((Pawn) grid[r][c].getPiece()).endrow) {
       promoteClick = true;
       lastClickedC = c;
       lastClickedR = r;
-      
+
       return;
     }
-    
 
     lastClickedC = -1;
     lastClickedR = -1;
@@ -344,12 +361,17 @@ public class Board {
   }
 
   public void addCapturedPiece(Piece p) {
-    if (p.isWhite) whiteCaptured.add(p);
-    else blackCaptured.add(p);
+    if (p.isWhite)
+      whiteCaptured.add(p);
+    else
+      blackCaptured.add(p);
   }
+
   public void removeCapturedPiece(Piece p) {
-    if (p.isWhite) whiteCaptured.remove(p);
-    else blackCaptured.remove(p);
+    if (p.isWhite)
+      whiteCaptured.remove(p);
+    else
+      blackCaptured.remove(p);
   }
 
   public void draw(Graphics g) {
@@ -358,7 +380,8 @@ public class Board {
         grid[i][j].draw(g);
       }
     }
-    //g.setColor(new Color(255, 255, 0, 75));
+
+    // g.setColor(new Color(255, 255, 0, 75));
     g.setColor(Color.YELLOW);
     int x = 22;
     if (moveWhite) {
@@ -367,7 +390,7 @@ public class Board {
     g.fillRect(x, 50, 50, 25);
     g.setColor(Color.YELLOW);
     g.drawRect(x, 50, 50, 25);
-    
+
     g.setColor(Color.WHITE);
     if (moveWhite) {
       GameFrame.getBTime().setVisible(false);
@@ -379,22 +402,24 @@ public class Board {
 
     Collections.sort(whiteCaptured, new comp());
     for (int i = 0; i < whiteCaptured.size(); i++) {
-      whiteCaptured.get(i).drawCaptured(g, 35, 75+i*20);
-      
+      whiteCaptured.get(i).drawCaptured(g, 35, 75 + i * 20);
+
     }
     Collections.sort(blackCaptured, new comp());
     for (int i = 0; i < blackCaptured.size(); i++) {
-      blackCaptured.get(i).drawCaptured(g, 535, 75+i*20);
+      blackCaptured.get(i).drawCaptured(g, 535, 75 + i * 20);
     }
 
   }
-  static class comp implements Comparator <Piece> { 
+
+  static class comp implements Comparator<Piece> {
     public int compare(Piece p1, Piece p2) {
-      if (p1.getValue()>p2.getValue()) 
+      if (p1.getValue() > p2.getValue())
         return -1;
       return 1;
     }
   }
+
   public boolean blackInCheck() {
     Square kSq = grid[bKing.getRank()][bKing.getFile()];
     for (Piece p : whitePieces) {
@@ -430,9 +455,9 @@ public class Board {
   }
 
   public boolean whiteCheckMated() {
-    for (Piece p: whitePieces) {
+    for (Piece p : whitePieces) {
       ArrayList<Square> moves = p.getLegalMoves(this);
-      for(Square s: moves) {
+      for (Square s : moves) {
         if (testMove(p, s)) {
           return false;
         }
@@ -442,9 +467,9 @@ public class Board {
   }
 
   public boolean blackCheckMated() {
-    for (Piece p: blackPieces) {
+    for (Piece p : blackPieces) {
       ArrayList<Square> moves = p.getLegalMoves(this);
-      for(Square s: moves) {
+      for (Square s : moves) {
         if (testMove(p, s)) {
           return false;
         }
@@ -461,7 +486,7 @@ public class Board {
     Piece p = null;
     boolean ans = true;
     if (grid[toR][toC].hasPiece()) {
-      p = grid[toR][toC].getPiece(); 
+      p = grid[toR][toC].getPiece();
       grid[toR][toC].capture();
     }
 
@@ -481,6 +506,9 @@ public class Board {
     } else if (movingPiece instanceof King) {
       ((King) movingPiece).subtractMove();
       ((King) movingPiece).subtractMove();
+    } else if (movingPiece instanceof Pawn) {
+      ((Pawn) movingPiece).subtractMove();
+      ((Pawn) movingPiece).subtractMove();
     }
 
     if (p != null) {
@@ -496,6 +524,9 @@ public class Board {
       } else if (p instanceof King) {
         ((King) p).subtractMove();
         ((King) p).subtractMove();
+      } else if (p instanceof Pawn) {
+        ((Pawn) p).subtractMove();
+        ((Pawn) p).subtractMove();
       }
     }
     return ans;

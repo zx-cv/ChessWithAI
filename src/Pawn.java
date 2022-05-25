@@ -7,9 +7,8 @@ import javax.swing.*;
 public class Pawn extends Piece{
     private static int x=450, w = 90, h=90;
     private int y = 0;
-    private boolean firstMove = true;
-    private boolean secondMove = true;
     public int endrow = 0;
+    private int moves = 0;
 
     public Pawn(boolean isWhite, int rank, int file) {
         this.isWhite = isWhite;
@@ -29,7 +28,7 @@ public class Pawn extends Piece{
         int dir = (isWhite ^ b.isWhite()) ? 1 : -1;
         Square[][] board = b.getGrid();
         ArrayList<Square> ans = new ArrayList<>();
-        if (firstMove) {
+        if (moves <= 1) {
             if (!board[rank+dir][file].hasPiece() && !board[rank+(2*dir)][file].hasPiece()) {
                 ans.add(board[rank+(2*dir)][file]);
             }
@@ -66,16 +65,13 @@ public class Pawn extends Piece{
     @Override
     public void moveTo(int r, int f) {
         super.moveTo(r, f);
-        if (firstMove && secondMove) {
-            firstMove = true;
-            secondMove = false;
-        } else if (firstMove) {
-            firstMove = false;
-            secondMove = true;
-        } else if (secondMove) {
-            secondMove = false;
-        }
+        moves++;
     }
+
+    public int getMoves() {
+        return moves;
+    }
+
 
     @Override
     public void draw(Graphics g) {
@@ -130,6 +126,10 @@ public class Pawn extends Piece{
         //g.drawImage(openImageFromSpriteSheet(Knight.x, iy, w, h), x, y+3*Square.getSide()+Square.getSide()/2, null);
         
         GameFrame.getPawnPromotion().repaint();
+    }
+
+    public void subtractMove() {
+        moves--;
     }
     
 }
