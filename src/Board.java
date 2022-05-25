@@ -282,6 +282,7 @@ public class Board {
       grid[r][c].removePiece();
       if (p != null) {
         grid[r][c].placePiece(p);
+        removeCapturedPiece(p);
         if (p instanceof Rook) {
           ((Rook) p).subtractMove();
         } else if (p instanceof King) {
@@ -345,6 +346,10 @@ public class Board {
   public void addCapturedPiece(Piece p) {
     if (p.isWhite) whiteCaptured.add(p);
     else blackCaptured.add(p);
+  }
+  public void removeCapturedPiece(Piece p) {
+    if (p.isWhite) whiteCaptured.remove(p);
+    else blackCaptured.remove(p);
   }
 
   public void draw(Graphics g) {
