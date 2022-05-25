@@ -69,6 +69,10 @@ public class Game {
 		for (Piece p: GameFrame.getBoard().getBlackPieces()) {
 			p.draw(g);
 		}
+		// if (GameFrame.getBoard().ghostPawn != null && GameFrame.getBoard().ghostPawn.getPiece() != null) {
+		// 	GameFrame.getBoard().ghostPawn.getPiece().draw(g);
+		// }
+
 		
 	}
 
