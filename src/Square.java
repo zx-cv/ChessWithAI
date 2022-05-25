@@ -41,15 +41,15 @@ public class Square{
 
   public void capture() {
     if (piece.isWhite()) {
-      for (int i = 0; i < Board.getWhitePieces().size(); i++) {
-        if (Board.getWhitePieces().get(i) == piece) {
-          Board.getWhitePieces().remove(i);
+      for (int i = 0; i < GameFrame.getBoard().getWhitePieces().size(); i++) {
+        if (GameFrame.getBoard().getWhitePieces().get(i) == piece) {
+          GameFrame.getBoard().getWhitePieces().remove(i);
         }
       }
     } else {
-      for (int i = 0; i < Board.getBlackPieces().size(); i++) {
-        if (Board.getBlackPieces().get(i) == piece) {
-          Board.getBlackPieces().remove(i);
+      for (int i = 0; i < GameFrame.getBoard().getBlackPieces().size(); i++) {
+        if (GameFrame.getBoard().getBlackPieces().get(i) == piece) {
+          GameFrame.getBoard().getBlackPieces().remove(i);
         }
       }
     }

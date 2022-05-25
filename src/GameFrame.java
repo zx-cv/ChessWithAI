@@ -18,7 +18,7 @@ import java.io.*;
 
 public class GameFrame extends JFrame {
 	private int prints = 0;
-	private Game game = new Game();
+	private static Game game = new Game();
 	private static Board board = new Board(); // i chose a random color but maybe we could make it user input?
 	private static double startTime;
 	private static double blackTimeLeft = 600.0, whiteTimeLeft = 600.0;
@@ -63,6 +63,9 @@ public class GameFrame extends JFrame {
 	}
 	public static JLabel getBTime() {
 		return btime;
+	}
+	public static Game getGame() {
+		return game;
 	}
 
 	/**
@@ -164,7 +167,7 @@ public class GameFrame extends JFrame {
 		showMoves.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Board.setShowMoves(true);
+				board.setShowMoves(true);
 				showMoves.setBackground(Color.YELLOW);
 				hideMoves.setBackground(Color.WHITE);
 			}
@@ -172,7 +175,7 @@ public class GameFrame extends JFrame {
 		hideMoves.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Board.setShowMoves(false);
+				board.setShowMoves(false);
 				showMoves.setBackground(Color.WHITE);
 				hideMoves.setBackground(Color.YELLOW);
 			}
@@ -193,7 +196,7 @@ public class GameFrame extends JFrame {
 		timer = new Timer(REFRESH, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (Game.isGameStarted()) {
+				if (game.isGameStarted()) {
 					start.setVisible(false);
 					wtime.setVisible(true);
 					btime.setVisible(true);
@@ -204,14 +207,14 @@ public class GameFrame extends JFrame {
 					wtime.setText(getTime());
 					btime.setText(getTime());
 					mb.setVisible(true);
-					if (getTime().equals("00:00") || Game.isGameOver()) {
+					if (getTime().equals("00:00") || game.isGameOver()) {
 						gameOver();
 						return;
 					}
 				} else {
 					if (beginButton.getModel().isPressed()) {
-						Game.setGameStarted(true);
-						board.generatePieces(Board.isWhite());
+						game.setGameStarted(true);
+						board.generatePieces(board.isWhite());
 						startTime = 1.0 * System.currentTimeMillis();
 						return;
 					}
@@ -219,14 +222,14 @@ public class GameFrame extends JFrame {
 						//System.out.println("black button is pressed");
 						whiteButton.setBackground(new Color(210, 180, 140));
 						blackButton.setBackground(Color.YELLOW);
-						Board.setWhite(false);
+						board.setWhite(false);
 						panel.repaint();
 						return;
 					} else if (whiteButton.getModel().isPressed()) {
 						//System.out.println("white button is pressed");
 						blackButton.setBackground(new Color(210, 180, 140));
 						whiteButton.setBackground(Color.YELLOW);
-						Board.setWhite(true);
+						board.setWhite(true);
 						panel.repaint();
 						return;
 					}
@@ -252,7 +255,7 @@ public class GameFrame extends JFrame {
 
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
-		if (Game.isGameStarted()) board.justClicked(me);
+		if (game.isGameStarted()) board.justClicked(me);
 		panel.repaint();
 	}
 
@@ -298,7 +301,7 @@ public class GameFrame extends JFrame {
 			//t = 615 - ((System.currentTimeMillis() - startTime) / 1000 - 2) - whiteTimeLeft;
 			blackTimeLeft = t;
 		}
-		if (t == 0) Game.setGameOver(true);
+		if (t == 0) game.setGameOver(true);
 		int i = (int)t / 60;
 		if (i < 10) s += "0";
 		s +=  i + ":";
@@ -345,8 +348,8 @@ public class GameFrame extends JFrame {
 		System.exit(0);
 	}
 	public void restart() {
-		Game.setGameOver(false);
-		Game.setGameStarted(false);
+		// game.setGameOver(false);
+		// game.setGameStarted(false);
 		board = new Board();
 		game = new Game();
 		start.setVisible(true);

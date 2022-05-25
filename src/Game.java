@@ -8,22 +8,22 @@ import javax.swing.*;
 
 public class Game {
 	
-	private static boolean gameOver = false;
-	private static boolean gameStarted = false;
+	private boolean gameOver = false;
+	private boolean gameStarted = false;
     public Game(){
         
     }
 
-	public static boolean isGameOver() {
+	public boolean isGameOver() {
 		return gameOver;
 	}
-	public static void setGameOver(boolean b) {
+	public void setGameOver(boolean b) {
 		gameOver = b;
 	}
-	public static boolean isGameStarted() {
+	public boolean isGameStarted() {
 		return gameStarted;
 	}
-	public static void setGameStarted(boolean b) {
+	public void setGameStarted(boolean b) {
 		gameStarted = b;
 	}
 

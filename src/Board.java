@@ -6,20 +6,20 @@ import java.util.*;
 
 public class Board {
   private Square[][] grid = new Square[8][8];
-  private static ArrayList<Piece> whitePieces = new ArrayList<>();
-  private static ArrayList<Piece> blackPieces = new ArrayList<>();
+  private ArrayList<Piece> whitePieces = new ArrayList<>();
+  private ArrayList<Piece> blackPieces = new ArrayList<>();
   private int lastClickedR = -1, lastClickedC = -1;
   private boolean secondClick = false;
-  private static boolean isWhite = true;
-  private static boolean moveWhite = true;
+  private boolean isWhite = true;
+  private boolean moveWhite = true;
   private boolean promoteClick = false;
   private King bKing, wKing;
   private ArrayList<Square[][]> boardStates = new ArrayList<>();
-  public static Square ghostPawn = null;
-  private static ArrayList<Piece> whiteCaptured = new ArrayList<>();
-  private static ArrayList<Piece> blackCaptured = new ArrayList<>();
+  public Square ghostPawn = null;
+  private ArrayList<Piece> whiteCaptured = new ArrayList<>();
+  private ArrayList<Piece> blackCaptured = new ArrayList<>();
   private int afterGPawn;
-  private static boolean showPossibleMoves;
+  private boolean showPossibleMoves;
 
   public Board() {
     // setWhite(isWhite);
@@ -48,19 +48,19 @@ public class Board {
     return grid;
   }
 
-  public static ArrayList<Piece> getWhitePieces() {
+  public ArrayList<Piece> getWhitePieces() {
     return whitePieces;
   }
 
-  public static ArrayList<Piece> getBlackPieces() {
+  public ArrayList<Piece> getBlackPieces() {
     return blackPieces;
   }
 
-  public static void setShowMoves(boolean b) {
+  public void setShowMoves(boolean b) {
     showPossibleMoves = b;
   }
 
-  public static boolean getShowMoves() {
+  public boolean getShowMoves() {
     return showPossibleMoves;
   }
 
@@ -132,21 +132,14 @@ public class Board {
     }
   }
 
-  public static boolean isWhite() {
+  public boolean isWhite() {
     return isWhite;
   }
 
-  public static void setWhite(boolean b) {
+  public void setWhite(boolean b) {
     isWhite = b;
   }
 
-<<<<<<< HEAD
-  public void startClicked(MouseEvent me) {
-
-  }
-
-=======
->>>>>>> 41a9c83d55133aec851074626083d7c7c539c597
   public void justClicked(MouseEvent me) {
     int r = (me.getY() - Square.getSide() / 2) / Square.getSide();
     int c = (me.getX() - 2 * Square.getSide()) / Square.getSide();
@@ -349,10 +342,10 @@ public class Board {
     if (blackInCheck() || whiteInCheck()) {
       if (whiteCheckMated()) {
         System.out.println("White Checkmated");
-        Game.setGameOver(true);
+        GameFrame.getGame().setGameOver(true);
       } else if (blackCheckMated()) {
         System.out.println("Black Checkmated");
-        Game.setGameOver(true);
+        GameFrame.getGame().setGameOver(true);
       } else {
         System.out.println("CHECK");
       }
@@ -360,7 +353,7 @@ public class Board {
 
     else if ((moveWhite && whiteCheckMated()) || (!moveWhite && blackCheckMated())) {
       System.out.println("Stalemate");
-      Game.setGameOver(true);
+      GameFrame.getGame().setGameOver(true);
     }
 
     afterGPawn++;
