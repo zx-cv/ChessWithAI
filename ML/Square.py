@@ -1,5 +1,3 @@
-import numpy as np
-
 class Piece(object):
     def __init__(self, isWhite, rank, file):
         self.isWhite = isWhite
@@ -40,17 +38,17 @@ class Pawn(Piece):
             dir = -1
         
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
         if self.firstMove:
             if (board[self.rank+dir][self.file] is None and board[self.rank+(2*dir)][self.file] is None):
-                ans = np.append(ans, (self.rank+2*dir,self.file))
+                ans.append((self.rank+2*dir,self.file))
         if board[self.rank+dir][self.file] is None:
-            ans = np.append(ans, (self.rank+dir,self.file))
+            ans.append((self.rank+dir,self.file))
         for f in [self.file-1,self.file+1]:
             if (f<0 or f>7):
                 continue
             if (not (board[self.rank+dir][f] is None) and board[self.rank+dir][f].isWhite != self.isWhite):
-                ans = np.append(ans, (self.rank+dir,f))
+                ans.append((self.rank+dir,f))
         return ans
     
     
@@ -71,7 +69,7 @@ class Bishop(Piece):
     
     def getLegalMoves(self, b):
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
 
         r = self.rank
         f = self.file
@@ -80,9 +78,9 @@ class Bishop(Piece):
             f-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                     break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -91,9 +89,9 @@ class Bishop(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -102,9 +100,9 @@ class Bishop(Piece):
             f-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -113,9 +111,9 @@ class Bishop(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         return ans
 
@@ -125,17 +123,17 @@ class Knight(Piece):
     
     def getLegalMoves(self, b):
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
         for i in [-1,1]:
             for j in [-1,1]:
                 if (self.rank+2*j >= 0 and self.rank + 2*j < 8 and self.file +i >= 0 and self.file + i < 7):
                     s = board[self.rank + 2*j][self.file+i]
                     if (s is None or s.colorWhite() != self.isWhite):
-                        ans = np.append(ans, (self.rank+2*j, self.file+i))
+                        ans.append((self.rank+2*j, self.file+i))
                 if (self.rank+j >= 0 and self.rank + j < 8 and self.file +2*i >= 0 and self.file + 2*i < 8):
                     s = board[self.rank + j][self.file+2*i]
                     if (s is None or s.colorWhite() != self.isWhite):
-                        ans = np.append(ans, (self.rank+j, self.file+2*i))
+                        ans.append((self.rank+j, self.file+2*i))
         
         return ans
 
@@ -146,7 +144,7 @@ class Rook(Piece):
     
     def getLegalMoves(self, b):
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
 
         r = self.rank
         f = self.file
@@ -154,9 +152,9 @@ class Rook(Piece):
             r-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -164,9 +162,9 @@ class Rook(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -174,9 +172,9 @@ class Rook(Piece):
             r+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -184,9 +182,9 @@ class Rook(Piece):
             f-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         return ans
         
@@ -208,7 +206,7 @@ class Queen(Piece):
     
     def getLegalMoves(self, b):
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
 
         r = self.rank
         f = self.file
@@ -217,9 +215,9 @@ class Queen(Piece):
             f-=1
             if not (board[r][f] is None):
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                     break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -228,9 +226,9 @@ class Queen(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -239,9 +237,9 @@ class Queen(Piece):
             f-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r=self.rank
         f=self.file
@@ -250,9 +248,9 @@ class Queen(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -260,9 +258,9 @@ class Queen(Piece):
             r-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -270,9 +268,9 @@ class Queen(Piece):
             f+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -280,9 +278,9 @@ class Queen(Piece):
             r+=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
         
         r = self.rank
         f = self.file
@@ -290,9 +288,9 @@ class Queen(Piece):
             f-=1
             if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
-                    ans = np.append(ans, (r,f))
+                    ans.append((r,f))
                 break
-            ans = np.append(ans, (r,f))
+            ans.append((r,f))
 
         return ans
 
@@ -306,7 +304,7 @@ class King(Piece):
     
     def getLegalMoves(self, b):
         board = b.getGrid()
-        ans = np.array([])
+        ans = []
         
         for i in [-1,0,1]:
             for j in [-1,0,1]:
@@ -315,7 +313,7 @@ class King(Piece):
                 s = board[self.rank + i][self.file + j]
                 if (not s is None and s.colorWhite() == self.isWhite):
                     continue
-                ans = np.append(ans, s)
+                ans.append((self.rank+i, self.file+j))
         
         return ans
     
@@ -332,9 +330,18 @@ class King(Piece):
 
 class Board:
     def __init__(self, boardstate):
-        self.grid = np.empty((8,8), dtype=Piece)
-        self.whitePieces = np.array([])
-        self.blackPieces = np.array([])
+        self.grid = [
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None]
+        ]
+        self.whitePieces = []
+        self.blackPieces = []
         counter = 0
         for i in range(0,8):
             for j in range(0,8):
@@ -343,51 +350,51 @@ class Board:
                 elif boardstate[counter] == 'P':
                     P = Pawn(True, i, j)
                     self.grid[i][j] = P
-                    self.whitePieces = np.append(self.whitePieces, P)
+                    self.whitePieces.append(P)
                 elif boardstate[counter] == 'p':
                     P = Pawn(False, i, j)
                     self.grid[i][j] = P
-                    self.blackPieces = np.append(self.blackPieces, P)
+                    self.blackPieces.append(P)
                 elif boardstate[counter] == 'B':
                     B = Bishop(True, i, j)
                     self.grid[i][j] = B
-                    self.whitePieces = np.append(self.whitePieces, B)
+                    self.whitePieces.append(B)
                 elif boardstate[counter] == 'b':
                     B = Bishop(False, i, j)
                     self.grid[i][j] = B
-                    self.blackPieces = np.append(self.blackPieces, B)
+                    self.blackPieces.append(B)
                 elif boardstate[counter] == 'N':
                     K = Knight(True, i, j)
                     self.grid[i][j] = K
-                    self.whitePieces = np.append(self.whitePieces, K)
+                    self.whitePieces.append(K)
                 elif boardstate[counter] == 'n':
                     K = Knight(False, i, j)
                     self.grid[i][j] = K
-                    self.blackPieces = np.append(self.blackPieces, K)
+                    self.blackPieces.append(K)
                 elif boardstate[counter] == 'R':
                     R = Rook(True, i, j)
                     self.grid[i][j] = R
-                    self.whitePieces = np.append(self.whitePieces, R)
+                    self.whitePieces.append(R)
                 elif boardstate[counter] == 'r':
                     R = Rook(False, i, j)
                     self.grid[i][j] = R
-                    self.blackPieces = np.append(self.blackPieces, R)
+                    self.blackPieces.append(R)
                 elif boardstate[counter] == 'Q':
                     Q = Queen(True, i, j)
                     self.grid[i][j] = Q
-                    self.whitePieces = np.append(self.whitePieces, Q)
+                    self.whitePieces.append(Q)
                 elif boardstate[counter] == 'q':
                     Q = Queen(False, i, j)
                     self.grid[i][j] = Q
-                    self.blackPieces = np.append(self.blackPieces, Q)
+                    self.blackPieces.append(Q)
                 elif boardstate[counter] == 'K':
                     K = King(True, i, j)
                     self.grid[i][j] = K
-                    self.whitePieces = np.append(self.whitePieces, K)
+                    self.whitePieces.append(K)
                 elif boardstate[counter] == 'k':
                     K = King(False, i, j)
                     self.grid[i][j] = K
-                    self.blackPieces = np.append(self.blackPieces, K)
+                    self.blackPieces.append(K)
                 counter+=1
         if boardstate[64] == '0':
             self.whiteMove = True
@@ -408,24 +415,24 @@ class Board:
         return self.whiteMove
     
     def makeMove(self, initialPiece, finalRank, finalFile):
-        self.grid[initialPiece.getRank][initialPiece.getFile] = None
+        self.grid[initialPiece.getRank()][initialPiece.getFile()] = None
         pieceTaken = self.grid[finalRank][finalFile]
         if not (pieceTaken is None):
-            if pieceTaken.isWhite:
-                self.whitePieces = np.delete(self.whitePieces, pieceTaken)
+            if pieceTaken.colorWhite():
+                self.whitePieces.remove(pieceTaken)
             else:
-                self.blackPieces = np.delete(self.blackPieces, pieceTaken)
+                self.blackPieces.remove(pieceTaken)
         self.grid[finalRank][finalFile] = initialPiece
         return pieceTaken
         
     def unmakeMove(self, finalRank, finalFile, initialPiece, takenPiece):
         self.grid[finalRank][finalFile] = takenPiece
         if not (takenPiece is None):
-            if takenPiece.isWhite:
-                self.whitePieces = np.append(self.whitePieces, takenPiece)
+            if takenPiece.colorWhite():
+                self.whitePieces.append(takenPiece)
             else:
-                self.blackPieces = np.append(self.blackPieces, takenPiece)
-        self.grid[initialPiece.getRank][initialPiece.getFile] = initialPiece
+                self.blackPieces.append(takenPiece)
+        self.grid[initialPiece.getRank()][initialPiece.getFile()] = initialPiece
     
     def toString(self):
         grid = self.grid

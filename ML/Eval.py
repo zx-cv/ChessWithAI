@@ -1,6 +1,3 @@
-from Square import *
-#from math import *
-
 class Evaluation:
     def __init__(self, board):
         self.board = board
@@ -69,28 +66,28 @@ class Evaluation:
         whitePieces = self.board.getWhitePieces()
         for piece in whitePieces:
             if isinstance(piece, Pawn):
-                whiteEval += self.pawnTable[piece.getRank][piece.getFile]
+                whiteEval += self.pawnTable[piece.getRank()][piece.getFile()]
             elif isinstance(piece, Knight):
-                whiteEval += self.knightTable[piece.getRank][piece.getFile]
+                whiteEval += self.knightTable[piece.getRank()][piece.getFile()]
             elif isinstance(piece, Bishop):
-                whiteEval += self.bishopTable[piece.getRank][piece.getFile]
+                whiteEval += self.bishopTable[piece.getRank()][piece.getFile()]
             elif isinstance(piece, Rook):
-                whiteEval += self.rookTable[piece.getRank][piece.getFile]
+                whiteEval += self.rookTable[piece.getRank()][piece.getFile()]
             elif isinstance(piece, Queen):
-                whiteEval += self.queenTable[piece.getRank][piece.getFile]
+                whiteEval += self.queenTable[piece.getRank()][piece.getFile()]
         blackEval = self.countMaterial(False)
         blackPieces = self.board.getBlackPieces()
         for piece in blackPieces:
             if isinstance(piece, Pawn):
-                blackEval += self.pawnTable[7-piece.getRank][7-piece.getFile]
+                blackEval += self.pawnTable[7-piece.getRank()][7-piece.getFile()]
             elif isinstance(piece, Knight):
-                blackEval += self.knightTable[7-piece.getRank][7-piece.getFile]
+                blackEval += self.knightTable[7-piece.getRank()][7-piece.getFile()]
             elif isinstance(piece, Bishop):
-                blackEval += self.bishopTable[7-piece.getRank][7-piece.getFile]
+                blackEval += self.bishopTable[7-piece.getRank()][7-piece.getFile()]
             elif isinstance(piece, Rook):
-                blackEval += self.rookTable[7-piece.getRank][7-piece.getFile]
+                blackEval += self.rookTable[7-piece.getRank()][7-piece.getFile()]
             elif isinstance(piece, Queen):
-                blackEval += self.queenTable[7-piece.getRank][7-piece.getFile]
+                blackEval += self.queenTable[7-piece.getRank()][7-piece.getFile()]
 
         evaluation = whiteEval - blackEval
         perspective = -1

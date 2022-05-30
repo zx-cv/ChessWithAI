@@ -26,6 +26,7 @@ public class Board {
   private boolean showPossibleMoves;
   private boolean yesAI = true;
   private boolean isAIturn = false;
+  PythonInterpreter interpreter = new PythonInterpreter();
 
   public Board() {
     // setWhite(isWhite);
@@ -444,7 +445,6 @@ public class Board {
       }
       grid[finalRank][finalFile].placePiece(grid[initialRank][initialFile].getPiece());
       grid[initialRank][initialFile].removePiece();
-      isWhite = !isWhite;
     }
   }
 

@@ -1,31 +1,27 @@
-import numpy as np
-from Eval import *
-from Square import *
-
 class Search:
     def __init__(self, board):
         self.board = board
-        self.bestMove = None
+        self.bestMove = (None, 0, 0)
     
     def search(self, depth, alpha, beta):
         if depth == 0:
             return Evaluation(self.board).evaluate()
         
-        pieces = np.concatenate((self.board.getWhitePieces(), self.board.getBlackPieces()))
-        moves = np.array([])
+        pieces = self.board.getWhitePieces().append(self.board.getBlackPieces())
+        moves = []
         for piece in pieces:
-            moves = np.concatenate((moves, piece.getLegalMoves(self.board)))
-        if moves.size == 0:
+            moves.append(piece.getLegalMoves(self.board))
+        if len(moves) == 0:
             return self.searchAllCaptures(self, alpha, beta)
         
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
-                print(move)
                 pieceTaken = self.board.makeMove(piece, move[0], move[1])
-                evaluation = -1*Search(depth-1, -1*beta, -1*alpha)
+                evaluation = -1*self.search(depth-1, -1*beta, -1*alpha)
                 self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
                 if evaluation >= beta:
+                    self.bestMove = (piece, move[0], move[1])
                     return beta
                 if evaluation > alpha:
                     self.bestMove = (piece, move[0], move[1])
@@ -38,7 +34,7 @@ class Search:
             return beta
         if evaluation > alpha:
             alpha = evaluation
-        pieces = np.concatenate((self.board.getWhitePieces(), self.board.getBlackPieces()))
+        pieces = self.board.getWhitePieces().append(self.board.getBlackPieces())
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
@@ -51,7 +47,6 @@ class Search:
                 if evaluation >= beta:
                     return beta
                 if evaluation > alpha:
-                    self.bestMove = (piece, move[0], move[1])
                     alpha = evaluation
         return alpha
                 
