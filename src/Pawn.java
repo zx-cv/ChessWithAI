@@ -19,6 +19,9 @@ public class Pawn extends Piece{
         this.value = 1;
     }
     
+    public String type() {
+        return "Pawn";
+    }
     @Override
     public boolean isPawn() {
         return true;

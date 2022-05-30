@@ -12,7 +12,9 @@ public abstract class Piece{
   private boolean selected;
   private Image image;
   protected int value;
-
+  private String type;
+  
+  public abstract String type();
   //returns a list of legal squares it can move to
   public abstract ArrayList<Square> getLegalMoves(Board board);
   public boolean isPawn() {

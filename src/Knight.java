@@ -20,6 +20,9 @@ public class Knight extends Piece {
     return x;
   }
 
+  public String type() {
+    return "Knight";
+  }
   // doesn't account for checks
   public ArrayList<Square> getLegalMoves(Board b) {
     Square[][] board = b.getGrid();

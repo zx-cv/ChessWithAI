@@ -16,6 +16,9 @@ public class King extends Piece{
     this.setImage(openImageFromSpriteSheet(x, y, w, h));
   }
 
+  public String type() {
+    return "King";
+  }
   //doesnt account for checks yet
   public ArrayList<Square> getLegalMoves(Board b){
     Square[][] board = b.getGrid();

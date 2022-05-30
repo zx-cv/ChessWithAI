@@ -19,6 +19,9 @@ public class Rook extends Piece{
         return x;
     }
 
+    public String type() {
+        return "Rook";
+    }
     // doesn't account for checks
     public ArrayList<Square> getLegalMoves(Board b) {
         Square[][] board = b.getGrid();
