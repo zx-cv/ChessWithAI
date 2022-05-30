@@ -18,6 +18,9 @@ public class Bishop extends Piece{
     return x;
   }
   
+  public String type() {
+    return "Bishop";
+  }
   //doesn't account for checks
   public ArrayList<Square> getLegalMoves(Board b){
     Square[][] board = b.getGrid();
