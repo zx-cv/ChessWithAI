@@ -3,6 +3,10 @@ package src;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import org.python.util.PythonInterpreter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
 
 public class Board {
   private Square[][] grid = new Square[8][8];
@@ -20,6 +24,8 @@ public class Board {
   private ArrayList<Piece> blackCaptured = new ArrayList<>();
   private int afterGPawn;
   private boolean showPossibleMoves;
+  private boolean yesAI = true;
+  private boolean isAIturn = false;
 
   public Board() {
     // setWhite(isWhite);
@@ -35,7 +41,68 @@ public class Board {
     // generatePieces(isWhite);
 
   }
-
+  public String toString() {
+    String s = "";
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        Piece piece = grid[i][j].getPiece();
+        if (piece == null) {
+          s += "0";
+          continue;
+        }
+        switch (piece.type()) {
+          case "Pawn":
+            if (piece.isWhite()) {
+              s += "P";
+            } else {
+              s += "p";
+            }
+            break;
+          case "Bishop":
+            if (piece.isWhite()) {
+              s += "B";
+            } else {
+              s += "b";
+            }
+            break;
+          case "Knight":
+            if (piece.isWhite()) {
+              s += "N";
+            } else {
+              s += "n";
+            }
+            break;
+          case "Rook":
+            if (piece.isWhite()) {
+              s += "R";
+            } else {
+              s += "r";
+            }
+            break;
+          case "Queen":
+            if (piece.isWhite()) {
+              s += "Q";
+            } else {
+              s += "q";
+            }
+            break;
+          case "King":
+            if (piece.isWhite()) {
+              s += "K";
+            } else {
+              s += "K";
+            }
+            break;
+        }
+      }
+    }
+    if (isWhite) {
+      s += '0';
+    } else {
+      s += '1';
+    }
+    return s;
+  }
   public boolean whiteMove() {
     return moveWhite;
   }
@@ -140,7 +207,7 @@ public class Board {
     isWhite = b;
   }
 
-  public void justClicked(MouseEvent me) {
+  public void justClicked(MouseEvent me) throws IOException {
     int r = (me.getY() - Square.getSide() / 2) / Square.getSide();
     int c = (me.getX() - 2 * Square.getSide()) / Square.getSide();
     if (!secondClick) {
@@ -359,6 +426,26 @@ public class Board {
     afterGPawn++;
 
     boardStates.add(grid.clone());
+    if (yesAI) {
+      PythonInterpreter interpreter = new PythonInterpreter();
+      FileWriter writer = new FileWriter("textfile.txt", false);
+      writer.write(this.toString());
+      writer.close();
+      interpreter.execfile("ML/Run.py");
+      File file = new File("textfile.txt");
+      Scanner scanner = new Scanner(file);
+      int initialRank = scanner.nextInt();
+      int initialFile = scanner.nextInt();
+      int finalRank = scanner.nextInt();
+      int finalFile = scanner.nextInt();
+      if (grid[finalRank][finalFile].hasPiece()) {
+        addCapturedPiece(grid[finalRank][finalFile].getPiece());
+        grid[finalRank][finalFile].capture();
+      }
+      grid[finalRank][finalFile].placePiece(grid[initialRank][initialFile].getPiece());
+      grid[initialRank][initialFile].removePiece();
+      isWhite = !isWhite;
+    }
   }
 
   public boolean inBounds(int toR, int toC) {

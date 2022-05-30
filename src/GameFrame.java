@@ -255,7 +255,13 @@ public class GameFrame extends JFrame {
 
 	protected void clickedAt(MouseEvent me) {
 		//System.out.println("You just clicked "+me);	
-		if (game.isGameStarted()) board.justClicked(me);
+		if (game.isGameStarted())
+			try {
+				board.justClicked(me);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		panel.repaint();
 	}
 

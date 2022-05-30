@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
@@ -55,7 +56,12 @@ public class StartMenu extends JFrame{
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent me) {
-				clickedAt(me);
+				try {
+					clickedAt(me);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -101,7 +107,7 @@ public class StartMenu extends JFrame{
 
 	}
 
-	protected void clickedAt(MouseEvent me) {
+	protected void clickedAt(MouseEvent me) throws IOException {
 		//System.out.println("You just clicked "+me);	
 		GameFrame.getBoard().justClicked(me);
 		panel.repaint();
