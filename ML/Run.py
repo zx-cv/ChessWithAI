@@ -2,12 +2,15 @@ class Search:
     def __init__(self, board):
         self.board = board
         self.bestMove = (None, 0, 0)
+        self.maxdepth = 4
     
     def search(self, depth, alpha, beta):
         if depth == 0:
             return Evaluation(self.board).evaluate()
-        
-        pieces = self.board.getWhitePieces() + self.board.getBlackPieces()
+        if self.board.isWhiteMove():
+            pieces = self.board.getWhitePieces()
+        else:
+            pieces = self.board.getBlackPieces()
         moves = []
         for piece in pieces:
             moves.append(piece.getLegalMoves(self.board))
@@ -17,14 +20,21 @@ class Search:
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
+                secondpiece = self.board.getGrid()[move[0]][move[1]]
+                if not (secondpiece is None):
+                    if secondpiece.colorWhite() == piece.colorWhite():
+                        continue
                 pieceTaken = self.board.makeMove(piece, move[0], move[1])
                 evaluation = -1*self.search(depth-1, -1*beta, -1*alpha)
                 self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
+                if depth == 3:
+                    print (str(piece) + str(move[0]) + str(move[1]))
                 if evaluation >= beta:
-                    self.bestMove = (piece, move[0], move[1])
                     return beta
                 if evaluation > alpha:
-                    self.bestMove = (piece, move[0], move[1])
+                    if depth == 3:
+                        self.bestMove = (piece, move[0], move[1])
+                        print("bestMove: " + str(piece) + str(move[0]) + " " + str(move[1]))
                     alpha = evaluation
         return alpha
     
@@ -38,15 +48,24 @@ class Search:
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
+                secondpiece = self.board.getGrid()[move[0]][move[1]]
+                if not (secondpiece is None):
+                    if secondpiece.colorWhite() == piece.colorWhite():
+                        continue
                 pieceTaken = self.board.makeMove(piece, move[0], move[1])
                 if pieceTaken is None:
                     self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
                     continue
                 evaluation = -1*self.searchAllCaptures(-1*beta, -1*alpha)
                 self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
+                if depth == 3:
+                    print (str(piece) + str(move[0]) + str(move[1]))
                 if evaluation >= beta:
                     return beta
                 if evaluation > alpha:
+                    if depth == 3:
+                        print("bestMove: " + str(piece) + str(move[0]) + " " + str(move[1]))
+                        self.bestMove = (piece, move[0], move[1])
                     alpha = evaluation
         return alpha
                 
@@ -148,7 +167,7 @@ class Evaluation:
 
         evaluation = whiteEval - blackEval
         perspective = -1
-        if self.board.isWhiteMove:
+        if self.board.isWhiteMove():
             perspective = 1
         return evaluation * perspective
 
@@ -214,7 +233,7 @@ class Pawn(Piece):
     
     def getLegalMoves(self, b):
         dir = 0
-        if self.isWhite ^ b.isWhiteMove():
+        if not self.isWhite:
             dir = 1
         else:
             dir = -1
@@ -229,7 +248,7 @@ class Pawn(Piece):
         for f in [self.file-1,self.file+1]:
             if (f<0 or f>7):
                 continue
-            if (not (board[self.rank+dir][f] is None) and board[self.rank+dir][f].isWhite != self.isWhite):
+            if (not (board[self.rank+dir][f] is None) and board[self.rank+dir][f].colorWhite() != self.isWhite):
                 ans.append((self.rank+dir,f))
         return ans
     
@@ -314,7 +333,7 @@ class Knight(Piece):
                         ans.append((self.rank+2*j, self.file+i))
                 if (self.rank+j >= 0 and self.rank + j < 8 and self.file +2*i >= 0 and self.file + 2*i < 8):
                     s = board[self.rank + j][self.file+2*i]
-                    if (s is None or s.colorWhite() != self.isWhite):
+                    if (s is None or (s.colorWhite() is not self.isWhite)):
                         ans.append((self.rank+j, self.file+2*i))
         
         return ans
@@ -395,7 +414,7 @@ class Queen(Piece):
         while (r>0 and f>0):
             r-=1
             f-=1
-            if not (board[r][f] is None):
+            if not board[r][f] is None:
                 if board[r][f].colorWhite() != self.isWhite:
                     ans.append((r,f))
                     break
@@ -473,6 +492,7 @@ class Queen(Piece):
                     ans.append((r,f))
                 break
             ans.append((r,f))
+        
 
         return ans
 
@@ -493,7 +513,10 @@ class King(Piece):
                 if ((i==0 and j==0) or self.rank+i<0 or self.rank+i>7 or self.file+j<0 or self.file+j>7):
                     continue
                 s = board[self.rank + i][self.file + j]
-                if (not s is None and s.colorWhite() == self.isWhite):
+                if (s is None):
+                    ans.append((self.rank+i, self.file+j))
+                    continue
+                if (s.colorWhite() == self.isWhite):
                     continue
                 ans.append((self.rank+i, self.file+j))
         
@@ -601,10 +624,13 @@ class Board:
         pieceTaken = self.grid[finalRank][finalFile]
         if not (pieceTaken is None):
             if pieceTaken.colorWhite():
-                self.whitePieces.remove(pieceTaken)
+                if pieceTaken in self.whitePieces:
+                    self.whitePieces.remove(pieceTaken)
             else:
-                self.blackPieces.remove(pieceTaken)
+                if pieceTaken in self.blackPieces:
+                    self.blackPieces.remove(pieceTaken)
         self.grid[finalRank][finalFile] = initialPiece
+        self.whiteMove = not self.whiteMove
         return pieceTaken
         
     def unmakeMove(self, finalRank, finalFile, initialPiece, takenPiece):
@@ -614,53 +640,16 @@ class Board:
                 self.whitePieces.append(takenPiece)
             else:
                 self.blackPieces.append(takenPiece)
+        self.whiteMove = not self.whiteMove
         self.grid[initialPiece.getRank()][initialPiece.getFile()] = initialPiece
-    
-    def toString(self):
-        grid = self.grid
-        s = ''
-        for row in grid:
-            for square in row:
-                if isinstance(square, Pawn):
-                    if square.colorWhite():
-                        s +='P'
-                    else:
-                        s += 'p'
-                elif isinstance(square, Bishop):
-                    if square.colorWhite():
-                        s += 'B'
-                    else:
-                        s += 'b'
-                elif isinstance(square, Knight):
-                    if square.colorWhite():
-                        s += 'N'
-                    else:
-                        s += 'n'
-                elif isinstance(square, Rook):
-                    if square.colorWhite():
-                        s += 'R'
-                    else:
-                        s += 'r'
-                elif isinstance(square, Queen):
-                    if square.colorWhite():
-                        s += 'Q'
-                    else:
-                        s += 'q'
-                elif isinstance(square, King):
-                    if square.colorWhite():
-                        s += 'K'
-                    else:
-                        s += 'k'
-                else:
-                    s += '0'
-        return s
 
 
 with open('textfile.txt') as f:
     input = f.readline()
 board = Board(input)
+print(str(board.isWhiteMove()))
 search = Search(board)
-search.search(2, 0, 0)
+search.search(3, -10000, 100000)
 thetuple = search.getBestMove()
 with open('textfile.txt', 'w') as f:
     f.write(str(thetuple[0].getRank()) + " " + str(thetuple[0].getFile()) + " " + str(thetuple[1]) + " " + str(thetuple[2]))

@@ -26,7 +26,6 @@ public class Board {
   private boolean showPossibleMoves;
   private boolean yesAI = true;
   private boolean isAIturn = false;
-  PythonInterpreter interpreter = new PythonInterpreter();
 
   public Board() {
     // setWhite(isWhite);
@@ -97,7 +96,7 @@ public class Board {
         }
       }
     }
-    if (isWhite) {
+    if (moveWhite) {
       s += '0';
     } else {
       s += '1';
@@ -134,7 +133,7 @@ public class Board {
 
   // initializes and place pieces on the board
   // isWhite == true will make white on bottom and vice versa
-  public void generatePieces(boolean isWhite) {
+  public void generatePieces(boolean isWhite) throws IOException {
     // Pawns
     for (int i = 0; i < 8; i++) {
       grid[1][i].placePiece(new Pawn(!isWhite, 1, i));
@@ -197,6 +196,26 @@ public class Board {
         blackPieces.add(grid[6][i].getPiece());
         blackPieces.add(grid[7][i].getPiece());
       }
+    }
+    if (yesAI && !this.isWhite) {
+      PythonInterpreter interpreter = new PythonInterpreter();
+      FileWriter writer = new FileWriter("textfile.txt", false);
+      writer.write(this.toString());
+      writer.close();
+      interpreter.execfile("ML/Run.py");
+      File file = new File("textfile.txt");
+      Scanner scanner = new Scanner(file);
+      int initialRank = scanner.nextInt();
+      int initialFile = scanner.nextInt();
+      int finalRank = scanner.nextInt();
+      int finalFile = scanner.nextInt();
+      if (grid[finalRank][finalFile].hasPiece()) {
+        addCapturedPiece(grid[finalRank][finalFile].getPiece());
+        grid[finalRank][finalFile].capture();
+      }
+      grid[finalRank][finalFile].placePiece(grid[initialRank][initialFile].getPiece());
+      grid[initialRank][initialFile].removePiece();
+      this.moveWhite = !this.moveWhite;
     }
   }
 
@@ -445,6 +464,7 @@ public class Board {
       }
       grid[finalRank][finalFile].placePiece(grid[initialRank][initialFile].getPiece());
       grid[initialRank][initialFile].removePiece();
+      this.moveWhite = !this.moveWhite;
     }
   }
 

@@ -214,7 +214,12 @@ public class GameFrame extends JFrame {
 				} else {
 					if (beginButton.getModel().isPressed()) {
 						game.setGameStarted(true);
-						board.generatePieces(board.isWhite());
+						try {
+							board.generatePieces(board.isWhite());
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						startTime = 1.0 * System.currentTimeMillis();
 						return;
 					}
