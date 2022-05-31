@@ -90,7 +90,7 @@ public class Board {
             if (piece.isWhite()) {
               s += "K";
             } else {
-              s += "K";
+              s += "k";
             }
             break;
         }

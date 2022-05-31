@@ -7,10 +7,10 @@ class Search:
     def search(self, depth, alpha, beta):
         if depth == 0:
             return Evaluation(self.board).evaluate()
-        if self.board.isWhiteMove():
-            pieces = self.board.getWhitePieces()
+        if self.board.whiteMove:
+            pieces = self.board.whitePieces
         else:
-            pieces = self.board.getBlackPieces()
+            pieces = self.board.blackPieces
         moves = []
         for piece in pieces:
             moves.append(piece.getLegalMoves(self.board))
@@ -20,19 +20,17 @@ class Search:
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
-                secondpiece = self.board.getGrid()[move[0]][move[1]]
-                if not (secondpiece is None):
-                    if secondpiece.colorWhite() == piece.colorWhite():
-                        continue
                 pieceTaken = self.board.makeMove(piece, move[0], move[1])
                 evaluation = -1*self.search(depth-1, -1*beta, -1*alpha)
                 self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
-                if depth == 3:
+                if depth == 4:
                     print (str(piece) + str(move[0]) + str(move[1]))
                 if evaluation >= beta:
                     return beta
                 if evaluation > alpha:
-                    if depth == 3:
+                    if depth == 4:
+                        if not (pieceTaken is None):
+                            print(str(pieceTaken) + " " + str(pieceTaken.isWhite))
                         self.bestMove = (piece, move[0], move[1])
                         print("bestMove: " + str(piece) + str(move[0]) + " " + str(move[1]))
                     alpha = evaluation
@@ -44,26 +42,22 @@ class Search:
             return beta
         if evaluation > alpha:
             alpha = evaluation
-        pieces = self.board.getWhitePieces() + self.board.getBlackPieces()
+        pieces = self.board.whitePieces + self.board.blackPieces
         for piece in pieces:
             moves = piece.getLegalMoves(self.board)
             for move in moves:
-                secondpiece = self.board.getGrid()[move[0]][move[1]]
-                if not (secondpiece is None):
-                    if secondpiece.colorWhite() == piece.colorWhite():
-                        continue
                 pieceTaken = self.board.makeMove(piece, move[0], move[1])
                 if pieceTaken is None:
                     self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
                     continue
                 evaluation = -1*self.searchAllCaptures(-1*beta, -1*alpha)
                 self.board.unmakeMove(move[0], move[1], piece, pieceTaken)
-                if depth == 3:
+                if depth == 4:
                     print (str(piece) + str(move[0]) + str(move[1]))
                 if evaluation >= beta:
                     return beta
                 if evaluation > alpha:
-                    if depth == 3:
+                    if depth == 4:
                         print("bestMove: " + str(piece) + str(move[0]) + " " + str(move[1]))
                         self.bestMove = (piece, move[0], move[1])
                     alpha = evaluation
@@ -82,18 +76,17 @@ class Evaluation:
         self.knightValue = 300
         self.rookValue = 500
         self.queenValue = 900
-        self.kingValue = float('inf')
         self.endgameMaterialStart = self.rookValue*2+self.bishopValue+self.knightValue
         #table datas taken from SebLague at https://github.com/SebLague and https://www.youtube.com/sebastianlague
         self.pawnTable = [
             [0,  0,  0,  0,  0,  0,  0,  0],
-			[50, 50, 50, 50, 50, 50, 50, 50],
+			[0, 0, 0, 0, 0, 0, 0, 0],
 			[10, 10, 20, 30, 30, 20, 10, 10],
-			[5,  5, 10, 25, 25, 10,  5,  5],
-			[0,  0,  0, 20, 20,  0,  0,  0],
-			[5, -5,-10,  0,  0,-10, -5,  5],
-			[5, 10, 10,-20,-20, 10, 10,  5],
-			[0,  0,  0,  0,  0,  0,  0,  0]
+			[10,  20, 30, 30, 30, 20,20,  10],
+			[20,  20,  30, 40, 40,  30,  20,  20],
+			[30, 30, 30,  40,  40, 30, 30,  30],
+			[50, 50, 50, 50, 50, 50, 50,  50],
+			[100,  100,  100,  100,  100,  100,  100,  100]
         ]
         self.knightTable = [
             [-50,-40,-30,-30,-30,-30,-40,-50],
@@ -126,7 +119,7 @@ class Evaluation:
 			[0,  0,  0,  5,  5,  0,  0,  0]
         ]
         self.queenTable = [
-            [-20,-10,-10, -5, -5,-10,-10,-20],
+            [-20,-10,-10, -5, -20,-10,-10,-20],
 			[-10,  0,  0,  0,  0,  0,  0,-10],
 			[-10,  0,  5,  5,  5,  5,  0,-10],
 			[-5,  0,  5,  5,  5,  5,  0, -5],
@@ -139,36 +132,56 @@ class Evaluation:
     
     def evaluate(self):
         whiteEval = self.countMaterial(True)
-        whitePieces = self.board.getWhitePieces()
+        whitePieces = self.board.whitePieces
+        kingExists = False
         for piece in whitePieces:
             if isinstance(piece, Pawn):
-                whiteEval += self.pawnTable[piece.getRank()][piece.getFile()]
+                whiteEval += self.pawnTable[piece.rank][piece.file]
             elif isinstance(piece, Knight):
-                whiteEval += self.knightTable[piece.getRank()][piece.getFile()]
+                whiteEval += self.knightTable[piece.rank][piece.file]
             elif isinstance(piece, Bishop):
-                whiteEval += self.bishopTable[piece.getRank()][piece.getFile()]
+                whiteEval += self.bishopTable[piece.rank][piece.file]
             elif isinstance(piece, Rook):
-                whiteEval += self.rookTable[piece.getRank()][piece.getFile()]
+                whiteEval += self.rookTable[piece.rank][piece.file]
             elif isinstance(piece, Queen):
-                whiteEval += self.queenTable[piece.getRank()][piece.getFile()]
+                whiteEval += self.queenTable[piece.rank][piece.file]
+            else:
+                kingExists = True
+            
         blackEval = self.countMaterial(False)
-        blackPieces = self.board.getBlackPieces()
+        blackPieces = self.board.blackPieces
+        blackKingExists = False
         for piece in blackPieces:
             if isinstance(piece, Pawn):
-                blackEval += self.pawnTable[7-piece.getRank()][7-piece.getFile()]
+                blackEval += self.pawnTable[7-piece.rank][7-piece.file]
             elif isinstance(piece, Knight):
-                blackEval += self.knightTable[7-piece.getRank()][7-piece.getFile()]
+                blackEval += self.knightTable[7-piece.rank][7-piece.file]
             elif isinstance(piece, Bishop):
-                blackEval += self.bishopTable[7-piece.getRank()][7-piece.getFile()]
+                blackEval += self.bishopTable[7-piece.rank][7-piece.file]
             elif isinstance(piece, Rook):
-                blackEval += self.rookTable[7-piece.getRank()][7-piece.getFile()]
+                blackEval += self.rookTable[7-piece.rank][7-piece.file]
             elif isinstance(piece, Queen):
-                blackEval += self.queenTable[7-piece.getRank()][7-piece.getFile()]
+                blackEval += self.queenTable[7-piece.rank][7-piece.file]
+            else:
+                blackKingExists = True
 
         evaluation = whiteEval - blackEval
+        if not kingExists:
+            if self.board.whiteBoard:
+                evaluation = -1000000000
+            else:
+                evaluation = evaluation*2
+
+        if not blackKingExists:
+            if not self.board.whiteBoard:
+                evaluation = 100000000
+            else:
+                evaluation = evaluation*2
         perspective = -1
-        if self.board.isWhiteMove():
+        if self.board.whiteMove:
             perspective = 1
+        if not self.board.whiteBoard:
+            perspective = -1*perspective
         return evaluation * perspective
 
     
@@ -182,9 +195,9 @@ class Evaluation:
         material = 0
         pieces = []
         if colorBoolean:
-            pieces = self.board.getWhitePieces()
+            pieces = self.board.whitePieces
         else:
-            pieces = self.board.getBlackPieces()
+            pieces = self.board.blackPieces
         for piece in pieces:
             if isinstance(piece, Pawn):
                 material += self.pawnValue
@@ -233,12 +246,12 @@ class Pawn(Piece):
     
     def getLegalMoves(self, b):
         dir = 0
-        if not self.isWhite:
+        if self.isWhite != b.whiteBoard:
             dir = 1
         else:
             dir = -1
         
-        board = b.getGrid()
+        board = b.grid
         ans = []
         if self.firstMove:
             if (board[self.rank+dir][self.file] is None and board[self.rank+(2*dir)][self.file] is None):
@@ -248,7 +261,7 @@ class Pawn(Piece):
         for f in [self.file-1,self.file+1]:
             if (f<0 or f>7):
                 continue
-            if (not (board[self.rank+dir][f] is None) and board[self.rank+dir][f].colorWhite() != self.isWhite):
+            if (not (board[self.rank+dir][f] is None) and board[self.rank+dir][f].isWhite != self.isWhite):
                 ans.append((self.rank+dir,f))
         return ans
     
@@ -269,7 +282,7 @@ class Bishop(Piece):
         super(Bishop, self).__init__(isWhite, rank, file)
     
     def getLegalMoves(self, b):
-        board = b.getGrid()
+        board = b.grid
         ans = []
 
         r = self.rank
@@ -278,7 +291,7 @@ class Bishop(Piece):
             r-=1
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                     break
             ans.append((r,f))
@@ -289,7 +302,7 @@ class Bishop(Piece):
             r-=1
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -300,7 +313,7 @@ class Bishop(Piece):
             r+=1
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -311,7 +324,7 @@ class Bishop(Piece):
             r+=1
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -323,17 +336,17 @@ class Knight(Piece):
         super(Knight, self).__init__(isWhite, rank, file)
     
     def getLegalMoves(self, b):
-        board = b.getGrid()
+        board = b.grid
         ans = []
         for i in [-1,1]:
             for j in [-1,1]:
                 if (self.rank+2*j >= 0 and self.rank + 2*j < 8 and self.file +i >= 0 and self.file + i < 7):
                     s = board[self.rank + 2*j][self.file+i]
-                    if (s is None or s.colorWhite() != self.isWhite):
+                    if (s is None or s.isWhite != self.isWhite):
                         ans.append((self.rank+2*j, self.file+i))
                 if (self.rank+j >= 0 and self.rank + j < 8 and self.file +2*i >= 0 and self.file + 2*i < 8):
                     s = board[self.rank + j][self.file+2*i]
-                    if (s is None or (s.colorWhite() is not self.isWhite)):
+                    if (s is None or (s.isWhite is not self.isWhite)):
                         ans.append((self.rank+j, self.file+2*i))
         
         return ans
@@ -344,7 +357,7 @@ class Rook(Piece):
         self.moves = 0
     
     def getLegalMoves(self, b):
-        board = b.getGrid()
+        board = b.grid
         ans = []
 
         r = self.rank
@@ -352,7 +365,7 @@ class Rook(Piece):
         while r>0:
             r-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -362,7 +375,7 @@ class Rook(Piece):
         while f<7:
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -372,7 +385,7 @@ class Rook(Piece):
         while r<7:
             r+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -382,7 +395,7 @@ class Rook(Piece):
         while f>0:
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -406,7 +419,7 @@ class Queen(Piece):
         super(Queen, self).__init__(isWhite, rank, file)
     
     def getLegalMoves(self, b):
-        board = b.getGrid()
+        board = b.grid
         ans = []
 
         r = self.rank
@@ -415,7 +428,7 @@ class Queen(Piece):
             r-=1
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                     break
             ans.append((r,f))
@@ -426,7 +439,7 @@ class Queen(Piece):
             r-=1
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -437,7 +450,7 @@ class Queen(Piece):
             r+=1
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -448,7 +461,7 @@ class Queen(Piece):
             r+=1
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -458,7 +471,7 @@ class Queen(Piece):
         while r>0:
             r-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -468,7 +481,7 @@ class Queen(Piece):
         while f<7:
             f+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -478,7 +491,7 @@ class Queen(Piece):
         while r<7:
             r+=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -488,7 +501,7 @@ class Queen(Piece):
         while f>0:
             f-=1
             if not board[r][f] is None:
-                if board[r][f].colorWhite() != self.isWhite:
+                if board[r][f].isWhite != self.isWhite:
                     ans.append((r,f))
                 break
             ans.append((r,f))
@@ -505,7 +518,7 @@ class King(Piece):
         self.moves = 0
     
     def getLegalMoves(self, b):
-        board = b.getGrid()
+        board = b.grid
         ans = []
         
         for i in [-1,0,1]:
@@ -516,7 +529,7 @@ class King(Piece):
                 if (s is None):
                     ans.append((self.rank+i, self.file+j))
                     continue
-                if (s.colorWhite() == self.isWhite):
+                if (s.isWhite == self.isWhite):
                     continue
                 ans.append((self.rank+i, self.file+j))
         
@@ -526,12 +539,6 @@ class King(Piece):
         self.moves+=1
         self.rank = r
         self.file = f
-    
-    def moved(self):
-        return self.moves>1
-    
-    def substractMove(self):
-        self.moves-=1
 
 class Board:
     def __init__(self, boardstate):
@@ -603,27 +610,17 @@ class Board:
                 counter+=1
         if boardstate[64] == '0':
             self.whiteMove = True
+            self.whiteBoard = False
         else:
             self.whiteMove = False
-
+            self.whiteBoard = True
     
-    def getGrid(self):
-        return self.grid
-    
-    def getWhitePieces(self):
-        return self.whitePieces
-    
-    def getBlackPieces(self):
-        return self.blackPieces
-    
-    def isWhiteMove(self):
-        return self.whiteMove
     
     def makeMove(self, initialPiece, finalRank, finalFile):
-        self.grid[initialPiece.getRank()][initialPiece.getFile()] = None
+        self.grid[initialPiece.rank][initialPiece.file] = None
         pieceTaken = self.grid[finalRank][finalFile]
         if not (pieceTaken is None):
-            if pieceTaken.colorWhite():
+            if pieceTaken.isWhite:
                 if pieceTaken in self.whitePieces:
                     self.whitePieces.remove(pieceTaken)
             else:
@@ -636,20 +633,20 @@ class Board:
     def unmakeMove(self, finalRank, finalFile, initialPiece, takenPiece):
         self.grid[finalRank][finalFile] = takenPiece
         if not (takenPiece is None):
-            if takenPiece.colorWhite():
+            if takenPiece.isWhite:
                 self.whitePieces.append(takenPiece)
             else:
                 self.blackPieces.append(takenPiece)
         self.whiteMove = not self.whiteMove
-        self.grid[initialPiece.getRank()][initialPiece.getFile()] = initialPiece
+        self.grid[initialPiece.rank][initialPiece.file] = initialPiece
 
 
 with open('textfile.txt') as f:
     input = f.readline()
 board = Board(input)
-print(str(board.isWhiteMove()))
+print(str(board.whiteMove))
 search = Search(board)
-search.search(3, -10000, 100000)
+search.search(4, -10000, 100000)
 thetuple = search.getBestMove()
 with open('textfile.txt', 'w') as f:
-    f.write(str(thetuple[0].getRank()) + " " + str(thetuple[0].getFile()) + " " + str(thetuple[1]) + " " + str(thetuple[2]))
+    f.write(str(thetuple[0].rank) + " " + str(thetuple[0].file) + " " + str(thetuple[1]) + " " + str(thetuple[2]))
